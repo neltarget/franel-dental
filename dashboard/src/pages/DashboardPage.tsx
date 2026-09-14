@@ -107,18 +107,19 @@ export default function DashboardPage() {
   return (
     <div className="space-y-4">
       {/* AI hero */}
-      <section className="relative overflow-hidden rounded-card border border-navy-2 bg-gradient-to-br from-[#0a1c33] via-navy to-navy-2 p-4 text-white shadow-card sm:p-5">
-        <div className="pointer-events-none absolute -right-10 -top-16 size-44 rounded-full bg-[#2fd8c2]/10 blur-2xl" />
-        <div className="pointer-events-none absolute -bottom-20 right-24 size-36 rounded-full bg-[#2fd8c2]/10 blur-2xl" />
+      <section className="relative overflow-hidden rounded-card bg-[linear-gradient(130deg,#071627_0%,#0c2138_40%,#0d3a44_74%,#0e5651_100%)] p-4 text-white shadow-card ring-1 ring-white/10 sm:p-5">
+        <div className="pointer-events-none absolute -right-12 -top-20 size-52 rounded-full bg-[#2fd8c2]/25 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 left-16 size-48 rounded-full bg-sky-400/15 blur-3xl" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
         <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#2fd8c2] ring-1 ring-inset ring-white/15">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#2fd8c2] shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] ring-1 ring-inset ring-white/20 backdrop-blur-md">
               <Sparkles size={18} />
             </span>
             <div>
               <p className="flex flex-wrap items-center gap-2 font-display text-sm font-bold tracking-tight">
                 Franel AI is active
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#2fd8c2]/15 px-2 py-0.5 text-[10px] font-bold text-[#2fd8c2] ring-1 ring-inset ring-[#2fd8c2]/30">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#2fd8c2]/15 px-2 py-0.5 text-[10px] font-bold text-[#2fd8c2] shadow-[0_0_14px_rgba(47,216,194,0.45)] ring-1 ring-inset ring-[#2fd8c2]/40 backdrop-blur-md">
                   <span className="size-1.5 rounded-full bg-[#2fd8c2] pulse-dot" />
                   LIVE
                 </span>
@@ -131,7 +132,7 @@ export default function DashboardPage() {
             </div>
           </div>
           <div className="flex items-center gap-3 sm:shrink-0">
-            <div className="flex items-center gap-3 rounded-xl bg-white/10 px-3.5 py-2.5 ring-1 ring-inset ring-white/10">
+            <div className="flex items-center gap-3 rounded-xl bg-white/[0.08] px-3.5 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] ring-1 ring-inset ring-white/15 backdrop-blur-md">
               <div>
                 <p className="font-display text-lg font-extrabold leading-none text-white">{stats.bookingsToday}</p>
                 <p className="mt-1 flex items-center gap-1 text-[9.5px] font-semibold text-white/60">
@@ -151,7 +152,7 @@ export default function DashboardPage() {
             <button
               onClick={openActivity}
               title="Open the AI activity log"
-              className="flex shrink-0 items-center gap-1.5 rounded-lg bg-white px-3.5 py-2 text-xs font-bold text-navy shadow-sm transition-all hover:bg-white/90 active:scale-95"
+              className="flex shrink-0 items-center gap-1.5 rounded-lg bg-white px-3.5 py-2 text-xs font-bold text-navy shadow-lg shadow-black/30 transition-all hover:bg-sky-50 active:scale-95"
             >
               AI Activity Log
               <ArrowRight size={13} />
@@ -439,7 +440,7 @@ export default function DashboardPage() {
 
 function HeroStat({ value, label }: { value: string; label: string }) {
   return (
-    <span className="inline-flex items-baseline gap-1.5 rounded-lg bg-white/10 px-2.5 py-1.5 ring-1 ring-inset ring-white/10">
+    <span className="inline-flex items-baseline gap-1.5 rounded-lg bg-white/[0.07] px-2.5 py-1.5 ring-1 ring-inset ring-white/10 backdrop-blur-md">
       <span className="font-display text-xs font-extrabold leading-none text-white">{value}</span>
       <span className="text-[9.5px] font-semibold leading-none text-white/55">{label}</span>
     </span>
