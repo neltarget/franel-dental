@@ -1,0 +1,1779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group 18 — Week 2 Deliverables | Franel Patient-Conversion AI Agent</title>
+    <style>
+        :root {
+            --primary: #0d6e6e;
+            --primary-light: #14919b;
+            --primary-dark: #094d4d;
+            --accent: #f0a500;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #1a1a2e;
+            --text-muted: #555;
+            --border: #dee2e6;
+            --section-gap: 3.5rem;
+            --green: #2e7d32;
+            --blue: #1565c0;
+            --orange: #e65100;
+            --red: #c62828;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 3rem 1.5rem;
+            text-align: center;
+        }
+        header .tag {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+        header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+        header p { font-size: 1.05rem; opacity: 0.9; max-width: 600px; margin: 0 auto; }
+        header .meta { margin-top: 1.5rem; font-size: 0.9rem; opacity: 0.75; }
+
+        /* Nav */
+        nav {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
+            max-width: 960px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+        nav a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        nav a:hover { color: var(--primary-dark); }
+
+        /* Sections */
+        section { margin-bottom: var(--section-gap); }
+        .section-header {
+            border-left: 4px solid var(--primary);
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .section-header h2 { font-size: 1.5rem; color: var(--primary-dark); }
+        .section-header .subtitle { color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem; }
+
+        h3 { font-size: 1.15rem; color: var(--primary); margin: 1.5rem 0 0.75rem; }
+        h4 { font-size: 1.05rem; color: var(--text); margin: 1.2rem 0 0.5rem; }
+        p { margin-bottom: 1rem; }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+        .card.highlight { border-left: 4px solid var(--accent); }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+        th, td {
+            padding: 0.6rem 0.8rem;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) { background: #f9f9f9; }
+
+        /* Lists */
+        ul, ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.4rem; }
+
+        /* PRD sections */
+        .req-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin: 1rem 0;
+        }
+        .req-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.25rem;
+        }
+        .req-card h4 { margin-top: 0; color: var(--primary-dark); font-size: 1rem; }
+        .req-card ul { margin-bottom: 0; font-size: 0.9rem; }
+
+        /* Milestone badge */
+        .milestone {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--text);
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin: 0.5rem 0;
+        }
+
+        /* User journey */
+        .journey-step {
+            display: flex;
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+            align-items: flex-start;
+        }
+        .journey-num {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .journey-content { flex: 1; }
+        .journey-content h4 { margin-top: 0.25rem; margin-bottom: 0.3rem; color: var(--primary-dark); }
+        .journey-content p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0; }
+        .journey-arrow {
+            text-align: center;
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin: -0.5rem 0;
+            padding-left: 18px;
+        }
+
+        /* Edge case cards */
+        .edge-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .edge-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        .edge-card h5 { font-size: 0.9rem; color: var(--primary-dark); margin-bottom: 0.3rem; }
+        .edge-card p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0; }
+
+        /* Wireframes */
+        .wireframe-container {
+            background: #e8e8e8;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .wireframe-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        /* Phone mockup */
+        .phone {
+            width: 320px;
+            margin: 0 auto;
+            background: #1a1a2e;
+            border-radius: 30px;
+            padding: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        }
+        .phone-screen {
+            background: #e5ddd5;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .phone-header {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .phone-header .avatar {
+            width: 32px;
+            height: 32px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+        .phone-header .name { font-weight: 600; font-size: 0.9rem; }
+        .phone-header .status { font-size: 0.7rem; opacity: 0.8; }
+        .chat-body { padding: 0.75rem; min-height: 350px; }
+        .msg {
+            max-width: 80%;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            position: relative;
+        }
+        .msg.incoming {
+            background: white;
+            margin-right: auto;
+            border-bottom-left-radius: 2px;
+        }
+        .msg.outgoing {
+            background: #dcf8c6;
+            margin-left: auto;
+            border-bottom-right-radius: 2px;
+        }
+        .msg .time {
+            font-size: 0.65rem;
+            color: #999;
+            text-align: right;
+            margin-top: 0.2rem;
+        }
+        .msg.system {
+            background: rgba(0,0,0,0.06);
+            max-width: 100%;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #666;
+            font-style: italic;
+        }
+        .msg.voice {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .msg.voice .play-btn {
+            width: 28px;
+            height: 28px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+        .msg.image {
+            padding: 0.3rem;
+        }
+        .msg.image .img-placeholder {
+            background: #ccc;
+            height: 100px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 0.75rem;
+        }
+
+        /* Dashboard wireframe */
+        .dash-mock {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .dash-topbar {
+            background: var(--primary-dark);
+            color: white;
+            padding: 0.6rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+        .dash-body { padding: 1rem; }
+        .dash-stats {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .dash-stat {
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+        }
+        .dash-stat .num { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        .dash-stat .lbl { font-size: 0.7rem; color: var(--text-muted); }
+        .dash-table {
+            width: 100%;
+            font-size: 0.75rem;
+            border-collapse: collapse;
+        }
+        .dash-table th {
+            background: var(--bg);
+            padding: 0.5rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border);
+        }
+        .dash-table td {
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        .status-badge.new { background: #e3f2fd; color: var(--blue); }
+        .status-badge.qualified { background: #e8f5e9; color: var(--green); }
+        .status-badge.booked { background: #fff3e0; color: var(--orange); }
+        .status-badge.escalated { background: #fce4ec; color: var(--red); }
+        .status-badge.no-show { background: #fce4ec; color: var(--red); }
+        .status-badge.attended { background: #e8f5e9; color: var(--green); }
+
+        /* Conversation detail wireframe */
+        .conv-detail {
+            display: grid;
+            grid-template-columns: 1fr 220px;
+            gap: 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .conv-main { border-right: 1px solid var(--border); }
+        .conv-sidebar { padding: 0.75rem; font-size: 0.75rem; }
+        .conv-sidebar h5 { font-size: 0.75rem; color: var(--primary-dark); margin: 0.75rem 0 0.3rem; }
+        .conv-sidebar .field { margin-bottom: 0.4rem; }
+        .conv-sidebar .field-label { color: var(--text-muted); font-size: 0.65rem; }
+        .conv-sidebar .field-value { font-weight: 500; }
+
+        /* AI Workflow */
+        .workflow-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            align-items: stretch;
+        }
+        .workflow-box {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem;
+        }
+        .workflow-box.llm { border-top: 3px solid var(--blue); }
+        .workflow-box.workflow { border-top: 3px solid var(--green); }
+        .workflow-box h4 { margin-top: 0; font-size: 0.95rem; }
+        .workflow-box ul { font-size: 0.85rem; padding-left: 1.2rem; }
+        .workflow-box li { margin-bottom: 0.3rem; }
+
+        .flow-diagram {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+        .flow-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .flow-node {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .flow-node.input { background: #e3f2fd; color: var(--blue); }
+        .flow-node.process { background: #e8f5e9; color: var(--green); }
+        .flow-node.decision { background: #fff3e0; color: var(--orange); border-radius: 50px; }
+        .flow-node.output { background: #f3e5f5; color: #7b1fa2; }
+        .flow-node.alert { background: #fce4ec; color: var(--red); }
+        .flow-arrow { color: var(--text-muted); font-size: 1.1rem; }
+        .flow-arrow.down { display: block; text-align: center; margin: 0.25rem 0; }
+
+        /* Architecture */
+        .arch-diagram {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+        }
+        .arch-layer {
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        .arch-layer-label {
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            background: white;
+            padding: 0 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .arch-row {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .arch-box {
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+            min-width: 120px;
+        }
+        .arch-box.core { background: var(--primary); color: white; }
+        .arch-box.config { background: #e0f2f1; color: var(--primary-dark); border: 1px solid var(--primary-light); }
+        .arch-box.tool { background: #e3f2fd; color: var(--blue); border: 1px solid #90caf9; }
+        .arch-box.data { background: #fff3e0; color: var(--orange); border: 1px solid #ffcc80; }
+        .arch-box.output { background: #f3e5f5; color: #7b1fa2; border: 1px solid #ce93d8; }
+        .arch-arrow {
+            text-align: center;
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin: 0.5rem 0;
+        }
+        .arch-tenant {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+        .tenant-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.6rem;
+            text-align: center;
+            font-size: 0.75rem;
+        }
+        .tenant-card .clinic-name { font-weight: 700; color: var(--primary-dark); margin-bottom: 0.3rem; }
+        .tenant-card .clinic-items { color: var(--text-muted); font-size: 0.7rem; }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .req-grid, .edge-grid, .dash-stats, .arch-tenant { grid-template-columns: 1fr; }
+            .dash-stats { grid-template-columns: repeat(2, 1fr); }
+            .workflow-row { flex-direction: column; }
+            .conv-detail { grid-template-columns: 1fr; }
+            .conv-main { border-right: none; border-bottom: 1px solid var(--border); }
+            header h1 { font-size: 1.6rem; }
+            nav ul { gap: 0.75rem; }
+            .phone { width: 100%; max-width: 320px; }
+        }
+
+        @media print {
+            nav { display: none; }
+            header { background: var(--primary-dark); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .card, .req-card, .edge-card { break-inside: avoid; }
+            .phone, .dash-mock, .conv-detail, .arch-diagram { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="tag">Codetrain AI Talent Accelerator 2026</div>
+    <h1>Group 18 — Week 2 Deliverables</h1>
+    <p>Define and design: the Franel patient-conversion AI Agent</p>
+    <div class="meta">Challenge: Healthcare & Health Access | Deliverable: Week 2 — Define & Design</div>
+    <div class="meta" style="margin-top: 0.5rem; opacity: 0.85;">Team: Frank Owusu Ansah, Nelson M.K. Ador</div>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="#prd">PRD</a></li>
+        <li><a href="#user-journey">User Journey</a></li>
+        <li><a href="#wireframes">Wireframes</a></li>
+        <li><a href="#ai-workflow">AI Workflow</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+
+    <!-- SECTION 1: PRD -->
+    <section id="prd">
+        <div class="section-header">
+            <h2>1. Product Requirements Document</h2>
+            <p class="subtitle">What we are building, for whom, and how we will know it works</p>
+        </div>
+
+        <h3>1.1 Product Vision</h3>
+        <p>
+            Franel is a patient-conversion AI Agent that lives on WhatsApp and helps private dental clinics turn enquiries into booked, confirmed, and attended appointments. It answers questions, qualifies leads, checks calendar availability, books appointments, follows up with patients, and escalates to human staff when needed.
+        </p>
+        <p>
+            The eventual goal is a multi-tenant platform where Franel's core personality stays constant and only the clinic-specific configuration changes. Each clinic gets its own isolated environment: its own calendar, its own patient data, its own dashboard, and its own conversation history.
+        </p>
+
+        <h3>1.2 Product Goals</h3>
+        <ol>
+            <li><strong>Prove that Franel can convert enquiries into bookings.</strong> The core question for the POC is simple: can a patient WhatsApp the clinic, have a natural conversation, and end up with a real appointment on the calendar?</li>
+            <li><strong>Reduce missed enquiries.</strong> Staff are stretched thin. Messages go unanswered. Follow-up doesn't happen. Franel fills these gaps without adding workload.</li>
+            <li><strong>Recover lost leads.</strong> People who enquire but don't book are currently abandoned. Franel follows up systematically and respectfully.</li>
+            <li><strong>Free up staff time.</strong> Receptionists spend hours answering the same questions. Franel handles the repetitive work so staff can focus on patients in front of them.</li>
+            <li><strong>Build toward a scalable product.</strong> The POC is one clinic. The architecture should support multiple clinics from the start.</li>
+        </ol>
+
+        <h3>1.3 Target Users</h3>
+        <table>
+            <tr>
+                <th>User</th>
+                <th>Who they are</th>
+                <th>What they need</th>
+            </tr>
+            <tr>
+                <td><strong>Patient</strong></td>
+                <td>Someone who saw a social media ad, got a referral, or searched for a dental clinic on WhatsApp</td>
+                <td>Quick answers about price and services, easy booking, reminders, and the option to talk to a real person</td>
+            </tr>
+            <tr>
+                <td><strong>Clinic Owner</strong></td>
+                <td>The practice owner or decision maker</td>
+                <td>Fewer missed enquiries, fewer no-shows, visibility into what's happening, and confidence that the AI is accurate</td>
+            </tr>
+            <tr>
+                <td><strong>Receptionist / Manager</strong></td>
+                <td>The person handling WhatsApp, phone, and walk-ins</td>
+                <td>Less repetitive work, messages handled when they're busy, and a simple way to take over when needed</td>
+            </tr>
+        </table>
+
+        <h3>1.4 Core Features (MVP)</h3>
+        <table>
+            <tr>
+                <th>Feature</th>
+                <th>What it does</th>
+                <th>Priority</th>
+            </tr>
+            <tr>
+                <td>WhatsApp inbound</td>
+                <td>Receives messages from patients on WhatsApp, including text, voice messages, and images</td>
+                <td>Must have</td>
+            </tr>
+            <tr>
+                <td>Intent recognition</td>
+                <td>Identifies what the patient wants: pricing, booking, service info, emergency, complaint, etc.</td>
+                <td>Must have</td>
+            </tr>
+            <tr>
+                <td>Clinic knowledge</td>
+                <td>Answers from verified clinic information only. Never invents prices, services, or policies</td>
+                <td>Must have</td>
+            </tr>
+            <tr>
+                <td>Lead qualification</td>
+                <td>Gathers the minimum information needed through natural conversation, not interrogation</td>
+                <td>Must have</td>
+            </tr>
+            <tr>
+                <td>Calendar integration</td>
+                <td>Checks real availability on Google Calendar and offers valid slots</td>
+                <td>Must have</td>
+            </tr>
+            <tr>
+                <td>Appointment booking</td>
+                <td>Books the appointment only after calendar confirmation. Never claims a booking without tool success</td>
+                <td>Must have</td>
+            </tr>
+            <tr>
+                <td>Confirmation</td>
+                <td>Sends booking confirmation with date, time, location, and what to expect</td>
+                <td>Must have</td>
+            </tr>
+            <tr>
+                <td>Follow-up</td>
+                <td>Follows up with non-bookers, sends reminders, handles no-show recovery. Configurable per clinic</td>
+                <td>Must have</td>
+            </tr>
+            <tr>
+                <td>Human escalation</td>
+                <td>Hands off to staff for complaints, clinical questions, emergencies, or when the patient asks for a human</td>
+                <td>Must have</td>
+            </tr>
+            <tr>
+                <td>Admin dashboard</td>
+                <td>Shows today's leads, bookings, escalations, and conversation threads. One view per clinic</td>
+                <td>Must have</td>
+            </tr>
+            <tr>
+                <td>Voice message handling</td>
+                <td>Transcribes incoming voice messages and processes them like text</td>
+                <td>Should have</td>
+            </tr>
+            <tr>
+                <td>Image handling</td>
+                <td>Receives images (e.g., dental cards, insurance info) and acknowledges them</td>
+                <td>Should have</td>
+            </tr>
+            <tr>
+                <td>Attendance tracking</td>
+                <td>Post-appointment WhatsApp check-in to confirm attendance, staff manual marking from dashboard, attendance metrics in dashboard stats</td>
+                <td>Must have</td>
+            </tr>
+        </table>
+
+        <h3>1.5 Functional Requirements</h3>
+        <div class="req-grid">
+            <div class="req-card">
+                <h4>Conversation</h4>
+                <ul>
+                    <li>Understand natural Ghanaian English input</li>
+                    <li>Handle multiple intents in one message</li>
+                    <li>Answer before qualifying</li>
+                    <li>One question at a time during qualification</li>
+                    <li>Never repeat questions already answered</li>
+                    <li>Use WhatsApp-native formatting (bold, italic)</li>
+                </ul>
+            </div>
+            <div class="req-card">
+                <h4>Booking</h4>
+                <ul>
+                    <li>Check real-time calendar availability</li>
+                    <li>Offer a small number of valid slots</li>
+                    <li>Re-validate slot before creating appointment</li>
+                    <li>Confirm only after tool success</li>
+                    <li>Handle rescheduling and cancellation</li>
+                    <li>Never create duplicate events</li>
+                </ul>
+            </div>
+            <div class="req-card">
+                <h4>Follow-up</h4>
+                <ul>
+                    <li>Non-booker follow-up at configurable intervals</li>
+                    <li>Appointment reminder (default: 24 hours before)</li>
+                    <li>No-show recovery (same day or next available)</li>
+                    <li>Check patient state before sending any scheduled message</li>
+                    <li>Stop when patient asks, books, declines, or is handed to human</li>
+                </ul>
+            </div>
+            <div class="req-card">
+                <h4>Escalation</h4>
+                <ul>
+                    <li>Tier 1: immediate emergency guidance + staff alert</li>
+                    <li>Tier 2: urgent, route to earliest appointment</li>
+                    <li>Tier 3: operational (complaint, human request, policy exception)</li>
+                    <li>Preserve conversation context for the human</li>
+                    <li>Continue monitoring after handoff where permitted</li>
+                </ul>
+            </div>
+            <div class="req-card">
+                <h4>Attendance</h4>
+                <ul>
+                    <li>Post-appointment check-in via WhatsApp (configurable timing, default: appointment end + 1 hour)</li>
+                    <li>Patient self-reports attendance by replying YES or NO</li>
+                    <li>Staff can manually mark attendance from admin dashboard</li>
+                    <li>Attendance states: pending, attended, no-show, cancelled</li>
+                    <li>24-hour flag timeout: unanswered check-ins flagged for staff review</li>
+                    <li>On no-show, offer rescheduling automatically</li>
+                    <li>Attendance metrics displayed in dashboard (attended count, no-show count)</li>
+                    <li>Attendance tracked per appointment in Supabase with marked_by and marked_at fields</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>1.6 Non-Functional Requirements</h3>
+        <div class="req-grid">
+            <div class="req-card">
+                <h4>Performance</h4>
+                <ul>
+                    <li>First response under 3 seconds for standard messages</li>
+                    <li>Calendar check under 2 seconds</li>
+                    <li>Booking confirmation under 5 seconds</li>
+                    <li>Dashboard loads under 2 seconds</li>
+                </ul>
+            </div>
+            <div class="req-card">
+                <h4>Reliability</h4>
+                <ul>
+                    <li>Never claim a booking without tool confirmation</li>
+                    <li>Never invent prices, times, or policies</li>
+                    <li>Graceful handling of tool failures with patient notification</li>
+                    <li>State persistence across conversation turns</li>
+                </ul>
+            </div>
+            <div class="req-card">
+                <h4>Security</h4>
+                <ul>
+                    <li>Per-clinic data isolation. No cross-clinic data sharing</li>
+                    <li>Conversation logs retained for 90 days, then purged</li>
+                    <li>No exposure of internal state, tool names, or escalation logic to patients</li>
+                    <li>Encryption at rest for patient data</li>
+                </ul>
+            </div>
+            <div class="req-card">
+                <h4>Usability</h4>
+                <ul>
+                    <li>WhatsApp-native experience. No learning curve for patients</li>
+                    <li>Dashboard accessible via web browser, no install required</li>
+                    <li>Escalation visible and actionable for staff within 1 click</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>1.7 Constraints and Assumptions</h3>
+        <div class="card highlight">
+            <h4>WhatsApp 24-hour window (production constraint)</h4>
+            <p>
+                The official WhatsApp Business API has a customer service window. When a patient initiates a conversation, free-form responses are possible within 24 hours. Outside that window, business-initiated outbound messages require approved templates.
+            </p>
+            <p>
+                For the POC, we use Baileys (unofficial WhatsApp connection) which does not have this restriction. But the follow-up system must be designed with this constraint in mind for production. Specifically:
+            </p>
+            <ul>
+                <li>Follow-up messages within 24 hours of last patient message: free-form, no restriction</li>
+                <li>Follow-up messages after 24 hours: must use pre-approved WhatsApp message templates</li>
+                <li>The follow-up module should track the timestamp of the last patient message and route accordingly</li>
+                <li>Template message support should be built as an adapter, not hardcoded, so the POC can work without it and production can plug it in</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h4>Other constraints</h4>
+            <ul>
+                <li><strong>POC scope:</strong> One clinic, one WhatsApp number, one Google Calendar. Multi-tenant architecture is designed but not fully implemented in POC.</li>
+                <li><strong>No clinical advice:</strong> Franel never diagnoses, prescribes, or promises clinical outcomes. This is a hard boundary.</li>
+                <li><strong>Clinic-approved content only:</strong> All service information, pricing, and policies come from the clinic knowledge source. Franel never invents facts.</li>
+                <li><strong>Voice and image support:</strong> Voice messages are transcribed to text before processing. Images are received and acknowledged but not clinically analyzed.</li>
+            </ul>
+        </div>
+
+        <h3>1.8 Data and Privacy Recommendations</h3>
+        <table>
+            <tr>
+                <th>Data type</th>
+                <th>Retention</th>
+                <th>Notes</th>
+            </tr>
+            <tr>
+                <td>Conversation logs</td>
+                <td>90 days</td>
+                <td>Purged after retention period. Used for quality improvement and escalation learning.</td>
+            </tr>
+            <tr>
+                <td>Appointment records</td>
+                <td>Per clinic policy</td>
+                <td>Stored in clinic's calendar system. Franel references but does not own this data.</td>
+            </tr>
+            <tr>
+                <td>Lead status and intent</td>
+                <td>Until resolved + 30 days</td>
+                <td>Tracks the patient's journey through the conversion funnel.</td>
+            </tr>
+            <tr>
+                <td>Clinic configuration</td>
+                <td>Indefinite</td>
+                <td>Services, pricing, policies, hours. Updated by clinic admin.</td>
+            </tr>
+            <tr>
+                <td>Escalation records</td>
+                <td>1 year</td>
+                <td>Used for learning and quality improvement. No patient-identifying info exposed in aggregate.</td>
+            </tr>
+        </table>
+        <p>
+            Ghana does not have a strict data protection regulation equivalent to GDPR, but healthcare data is inherently sensitive. Franel follows a minimum-necessary principle: it collects only what is needed for scheduling and routing, never over-collects medical history, and treats all health-related conversations as sensitive by default.
+        </p>
+
+        <h3>1.9 Success Metrics</h3>
+        <table>
+            <tr>
+                <th>Metric</th>
+                <th>Target (POC)</th>
+                <th>How measured</th>
+            </tr>
+            <tr>
+                <td>Lead-to-booking conversion rate</td>
+                <td>30% or higher</td>
+                <td>Booked appointments / total enquiries</td>
+            </tr>
+            <tr>
+                <td>Average first response time</td>
+                <td>Under 3 seconds</td>
+                <td>Time from patient message to Franel reply</td>
+            </tr>
+            <tr>
+                <td>Booking accuracy</td>
+                <td>100%</td>
+                <td>Appointments confirmed only after tool success. Zero false claims.</td>
+            </tr>
+            <tr>
+                <td>Clinical boundary violations</td>
+                <td>Zero</td>
+                <td>Number of times Franel diagnoses, prescribes, or invents clinical info</td>
+            </tr>
+            <tr>
+                <td>Follow-up execution rate</td>
+                <td>90% or higher</td>
+                <td>Scheduled follow-ups sent / scheduled follow-ups due</td>
+            </tr>
+            <tr>
+                <td>Escalation accuracy</td>
+                <td>90% or higher</td>
+                <td>Correct tier assignment / total escalations</td>
+            </tr>
+            <tr>
+                <td>Patient satisfaction (qualitative)</td>
+                <td>Positive feedback from test users</td>
+                <td>Post-conversation survey or feedback messages</td>
+            </tr>
+        </table>
+
+        <h3>1.10 Phased Delivery</h3>
+        <table>
+            <tr>
+                <th>Phase</th>
+                <th>Scope</th>
+                <th>Timeline</th>
+            </tr>
+            <tr>
+                <td><strong>MVP (POC)</strong></td>
+                <td>WhatsApp inbound, intent recognition, clinic knowledge, qualification, calendar booking, confirmation, basic follow-up, escalation, dashboard</td>
+                <td>Weeks 3-4</td>
+            </tr>
+            <tr>
+                <td><strong>Phase 2</strong></td>
+                <td>Facebook/Instagram attribution, advanced follow-up, no-show recovery, rescheduling, multiple dentists/calendars, deposits/payments, review requests, richer analytics</td>
+                <td>Post-MVP</td>
+            </tr>
+            <tr>
+                <td><strong>Phase 3</strong></td>
+                <td>Voice AI, CRM integrations, patient reactivation, treatment-plan follow-up, recall campaigns, multi-channel, predictive lead scoring, WhatsApp Cloud API migration</td>
+                <td>Scale phase</td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- SECTION 2: USER JOURNEY -->
+    <section id="user-journey">
+        <div class="section-header">
+            <h2>2. User Journey</h2>
+            <p class="subtitle">From first message to attended appointment</p>
+        </div>
+
+        <p>
+            The primary journey is a straight path from enquiry to appointment. But real conversations don't always go in a straight line. Below is the happy path, followed by the edge cases Franel must handle.
+        </p>
+
+        <h3>Happy path: enquiry to appointment</h3>
+
+        <div class="journey-step">
+            <div class="journey-num">1</div>
+            <div class="journey-content">
+                <h4>Patient sends first message</h4>
+                <p>Patient WhatsApps the clinic, usually from a social media ad or referral. Message might be "how much is teeth whitening" or "I want to book an appointment" or just "hello."</p>
+            </div>
+        </div>
+        <div class="journey-arrow">↓</div>
+
+        <div class="journey-step">
+            <div class="journey-num">2</div>
+            <div class="journey-content">
+                <h4>Franel greets and identifies intent</h4>
+                <p>Franel responds with a warm greeting and reads the message to understand what the patient wants. If the intent is clear (pricing, booking, service info), Franel addresses it immediately. No cold questionnaire.</p>
+            </div>
+        </div>
+        <div class="journey-arrow">↓</div>
+
+        <div class="journey-step">
+            <div class="journey-num">3</div>
+            <div class="journey-content">
+                <h4>Franel answers the question</h4>
+                <p>Using verified clinic information, Franel provides the answer. Pricing is stated clearly. Services are explained. If something varies (like final cost after assessment), Franel says so honestly.</p>
+            </div>
+        </div>
+        <div class="journey-arrow">↓</div>
+
+        <div class="journey-step">
+            <div class="journey-num">4</div>
+            <div class="journey-content">
+                <h4>Franel qualifies naturally</h4>
+                <p>If the patient shows interest, Franel asks one useful question at a time to understand the need, timing, and any constraints. This is conversation, not interrogation. If the patient is clearly ready, Franel skips ahead to booking.</p>
+            </div>
+        </div>
+        <div class="journey-arrow">↓</div>
+
+        <div class="journey-step">
+            <div class="journey-num">5</div>
+            <div class="journey-content">
+                <h4>Franel offers appointment slots</h4>
+                <p>Franel checks the clinic's Google Calendar for real availability and offers a small number of valid options. "I have Tuesday at 10:00 am and Wednesday at 2:30 pm. Which works better?"</p>
+            </div>
+        </div>
+        <div class="journey-arrow">↓</div>
+
+        <div class="journey-step">
+            <div class="journey-num">6</div>
+            <div class="journey-content">
+                <h4>Patient selects a slot</h4>
+                <p>The patient picks a time. Franel re-validates the slot to make sure it's still available, then creates the calendar event.</p>
+            </div>
+        </div>
+        <div class="journey-arrow">↓</div>
+
+        <div class="journey-step">
+            <div class="journey-num">7</div>
+            <div class="journey-content">
+                <h4>Franel confirms the booking</h4>
+                <p>Only after the calendar tool confirms success, Franel tells the patient the appointment is booked. Confirmation includes date, time, clinic name, and location. "You're booked for Tuesday, 15 September at 10:30 am. I'll remind you before the appointment."</p>
+            </div>
+        </div>
+        <div class="journey-arrow">↓</div>
+
+        <div class="journey-step">
+            <div class="journey-num">8</div>
+            <div class="journey-content">
+                <h4>Franel sends reminder</h4>
+                <p>Based on clinic-configurable timing (default: 24 hours before), Franel sends a reminder. The reminder checks current state first: if the patient has already cancelled, rescheduled, or asked for no contact, the message is not sent.</p>
+            </div>
+        </div>
+        <div class="journey-arrow">↓</div>
+
+        <div class="journey-step">
+            <div class="journey-num">9</div>
+            <div class="journey-content">
+                <h4>Patient attends appointment</h4>
+                <p>The patient shows up. The conversion is complete. Lead → Qualified → Booked → Confirmed → Attended.</p>
+            </div>
+        </div>
+        <div class="journey-arrow">↓</div>
+
+        <div class="journey-step">
+            <div class="journey-num">10</div>
+            <div class="journey-content">
+                <h4>Franel sends post-appointment check-in</h4>
+                <p>After the appointment time passes (configurable, default: appointment end + 1 hour), Franel sends a WhatsApp check-in: "Hi [Name], we hope your visit went well! Could you confirm you attended? Reply YES or NO." If the patient confirms attendance, the status is updated. If the patient reports a no-show, Franel offers rescheduling. If there is no reply within 24 hours, the appointment is flagged for staff review in the dashboard. Staff can also manually mark attendance at any time.</p>
+            </div>
+        </div>
+
+        <h3>Edge cases</h3>
+        <div class="edge-grid">
+            <div class="edge-card">
+                <h5>Patient doesn't respond after initial enquiry</h5>
+                <p>Franel follows up based on clinic-configurable intervals (default: 24 hours, 3 days, 7 days). Each follow-up references the original conversation. Stops after 3 attempts, or immediately if the patient books, declines, or asks to stop.</p>
+            </div>
+            <div class="edge-card">
+                <h5>Patient wants to reschedule</h5>
+                <p>Franel identifies the existing appointment, confirms the new preferred time, checks availability, updates the calendar, and confirms the change. Never silently replaces one appointment with another.</p>
+            </div>
+            <div class="edge-card">
+                <h5>Patient cancels</h5>
+                <p>Franel confirms the cancellation, follows clinic policy, and offers to help rebook if appropriate. The slot becomes available for other patients.</p>
+            </div>
+            <div class="edge-card">
+                <h5>No-show</h5>
+                <p>Franel follows up same day or next available day. "Hi Ama, we had an appointment scheduled today. Would you like to reschedule?" Configurable per clinic.</p>
+            </div>
+            <div class="edge-card">
+                <h5>Patient asks for a human</h5>
+                <p>Tier 3 escalation. Franel acknowledges, hands off smoothly, and preserves the conversation context for staff. "I'll flag this for the clinic team so they can assist you directly."</p>
+            </div>
+            <div class="edge-card">
+                <h5>Emergency (Tier 1)</h5>
+                <p>Franel immediately advises the patient to seek emergency care. Does not continue normal conversation flow. Alerts the clinic team. "Facial swelling with difficulty swallowing needs urgent medical attention now."</p>
+            </div>
+            <div class="edge-card">
+                <h5>Clinical question beyond scope</h5>
+                <p>Patient asks "what antibiotics should I take?" Franel declines to prescribe, explains the dentist needs to assess the cause, and offers an appointment. Never invents clinical advice.</p>
+            </div>
+            <div class="edge-card">
+                <h5>Voice message received</h5>
+                <p>Franel transcribes the voice message to text, processes the intent, and responds normally. The patient doesn't need to know the transcription happened.</p>
+            </div>
+            <div class="edge-card">
+                <h5>Image received</h5>
+                <p>Patient sends a photo (e.g., dental card, insurance info, picture of a tooth). Franel acknowledges receipt and asks for relevant context if needed. Does not attempt clinical analysis of images.</p>
+            </div>
+            <div class="edge-card">
+                <h5>Mixed-language input</h5>
+                <p>Patient writes partly in Twi or Ga mixed with English. Franel responds in clear English as usual. If a message is entirely in a language Franel can't interpret confidently, it asks the patient to continue in English.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: WIREFRAMES -->
+    <section id="wireframes">
+        <div class="section-header">
+            <h2>3. Wireframes</h2>
+            <p class="subtitle">Visual layouts for the three main screens</p>
+        </div>
+
+        <h3>3.1 WhatsApp Chat — Patient View</h3>
+        <p>This is what the patient sees. A normal WhatsApp conversation with the clinic. Franel responds naturally, uses WhatsApp formatting, and handles voice and image inputs.</p>
+
+        <div class="wireframe-container">
+            <div class="wireframe-label">Patient View — WhatsApp Chat</div>
+            <div class="phone">
+                <div class="phone-screen">
+                    <div class="phone-header">
+                        <div class="avatar">🦷</div>
+                        <div>
+                            <div class="name">HarbourView Dental Clinic</div>
+                            <div class="status">online</div>
+                        </div>
+                    </div>
+                    <div class="chat-body">
+                        <div class="msg system">Today 10:32 AM</div>
+
+                        <div class="msg incoming">
+                            Hi please how much is teeth whitening
+                            <div class="time">10:32 AM</div>
+                        </div>
+
+                        <div class="msg outgoing">
+                            Hi! Welcome to HarbourView Dental. Teeth whitening starts from GHS 800. The final cost depends on the dentist's assessment during your consultation.
+                            <div class="time">10:32 AM ✓✓</div>
+                        </div>
+
+                        <div class="msg outgoing">
+                            Would you like me to check available appointment times for you?
+                            <div class="time">10:32 AM ✓✓</div>
+                        </div>
+
+                        <div class="msg incoming">
+                            Yes please. Do you have anything next week?
+                            <div class="time">10:34 AM</div>
+                        </div>
+
+                        <div class="msg outgoing">
+                            Let me check the schedule. One moment.
+                            <div class="time">10:34 AM ✓✓</div>
+                        </div>
+
+                        <div class="msg outgoing">
+                            I have Tuesday at 10:00 AM and Wednesday at 2:30 PM. Which works better for you?
+                            <div class="time">10:34 AM ✓✓</div>
+                        </div>
+
+                        <div class="msg incoming">
+                            Wednesday 2:30 is good
+                            <div class="time">10:35 AM</div>
+                        </div>
+
+                        <div class="msg outgoing">
+                            Great! Let me confirm that slot.
+                            <div class="time">10:35 AM ✓✓</div>
+                        </div>
+
+                        <div class="msg outgoing">
+                            You're booked for <b>Wednesday, 17 September at 2:30 PM</b>.<br><br>📍 HarbourView Dental Clinic, East Legon, Accra<br><br>I'll remind you before your appointment. See you then!
+                            <div class="time">10:35 AM ✓✓</div>
+                        </div>
+
+                        <div class="msg system">— Voice message example —</div>
+
+                        <div class="msg incoming voice">
+                            <div class="play-btn">▶</div>
+                            <div>
+                                <div style="height: 4px; background: #ccc; border-radius: 2px; margin-bottom: 3px;"></div>
+                                <div style="height: 4px; background: #ccc; border-radius: 2px; width: 60%;"></div>
+                            </div>
+                            <div class="time">10:40 AM</div>
+                        </div>
+
+                        <div class="msg outgoing">
+                            Got it! I understand you'd like to book for your daughter. What age is she, and what service do you need?
+                            <div class="time">10:40 AM ✓✓</div>
+                        </div>
+
+                        <div class="msg system">— Image example —</div>
+
+                        <div class="msg incoming image">
+                            <div class="img-placeholder">📷 Dental card photo</div>
+                            <div class="time">10:45 AM</div>
+                        </div>
+
+                        <div class="msg outgoing">
+                            Thanks for sharing that. I can see the previous treatment details. Would you like to book a follow-up appointment?
+                            <div class="time">10:45 AM ✓✓</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3>3.2 Admin Dashboard</h3>
+        <p>This is what the clinic staff sees. A simple, focused view showing today's activity, lead status, and any escalations that need attention.</p>
+
+        <div class="wireframe-container">
+            <div class="wireframe-label">Staff View — Admin Dashboard</div>
+            <div class="dash-mock">
+                <div class="dash-topbar">
+                    <span>🦷 Franel Dashboard — HarbourView Dental</span>
+                    <span>Wednesday, 17 September 2026</span>
+                </div>
+                <div class="dash-body">
+                    <div class="dash-stats">
+                        <div class="dash-stat">
+                            <div class="num">12</div>
+                            <div class="lbl">New Leads Today</div>
+                        </div>
+                        <div class="dash-stat">
+                            <div class="num">8</div>
+                            <div class="lbl">Qualified</div>
+                        </div>
+                        <div class="dash-stat">
+                            <div class="num">5</div>
+                            <div class="lbl">Booked</div>
+                        </div>
+                        <div class="dash-stat">
+                            <div class="num">3</div>
+                            <div class="lbl">Attended</div>
+                        </div>
+                        <div class="dash-stat">
+                            <div class="num">1</div>
+                            <div class="lbl">No-Shows</div>
+                        </div>
+                    </div>
+
+                    <h4 style="font-size: 0.85rem; margin-bottom: 0.5rem;">Recent Leads</h4>
+                    <table class="dash-table">
+                        <tr>
+                            <th>Patient</th>
+                            <th>Intent</th>
+                            <th>Status</th>
+                            <th>Attendance</th>
+                            <th>Last Message</th>
+                            <th>Source</th>
+                        </tr>
+                        <tr>
+                            <td>Ama K.</td>
+                            <td>Teeth Whitening</td>
+                            <td><span class="status-badge booked">Booked</span></td>
+                            <td><span class="status-badge new">Pending</span></td>
+                            <td>"Wednesday 2:30 is good"</td>
+                            <td>Facebook Ad</td>
+                        </tr>
+                        <tr>
+                            <td>Kwame D.</td>
+                            <td>Braces</td>
+                            <td><span class="status-badge booked">Booked</span></td>
+                            <td><span class="status-badge qualified">Attended</span></td>
+                            <td>"Thanks for the help"</td>
+                            <td>Referral</td>
+                        </tr>
+                        <tr>
+                            <td>Efua M.</td>
+                            <td>Child Check-up</td>
+                            <td><span class="status-badge new">New</span></td>
+                            <td>—</td>
+                            <td>"My daughter needs a check-up"</td>
+                            <td>Instagram</td>
+                        </tr>
+                        <tr>
+                            <td>Kofi A.</td>
+                            <td>Tooth Pain</td>
+                            <td><span class="status-badge escalated">Escalated</span></td>
+                            <td>—</td>
+                            <td>"My tooth is really hurting"</td>
+                            <td>Walk-in</td>
+                        </tr>
+                        <tr>
+                            <td>Adwoa B.</td>
+                            <td>General</td>
+                            <td><span class="status-badge new">New</span></td>
+                            <td>"What services do you offer?"</td>
+                            <td>WhatsApp</td>
+                        </tr>
+                    </table>
+
+                    <div style="margin-top: 1rem; padding: 0.75rem; background: #fce4ec; border-radius: 8px; font-size: 0.8rem;">
+                        <strong>⚠️ Escalation Alert:</strong> Kofi A. reported severe tooth pain with swelling. Tier 2 urgency. Earliest same-day appointment needed. <a href="#" style="color: var(--red);">View conversation →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3>3.3 Conversation Detail — Staff View</h3>
+        <p>When a staff member clicks on a lead, they see the full conversation thread alongside patient info, status, and action buttons.</p>
+
+        <div class="wireframe-container">
+            <div class="wireframe-label">Staff View — Conversation Detail</div>
+            <div class="conv-detail">
+                <div class="conv-main">
+                    <div style="background: var(--primary); color: white; padding: 0.6rem 1rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;">
+                        <span><strong>Ama K.</strong> — Teeth Whitening</span>
+                        <span style="font-size: 0.75rem; opacity: 0.8;">Facebook Ad</span>
+                    </div>
+                    <div style="padding: 0.75rem; background: #e5ddd5; min-height: 300px;">
+                        <div class="msg incoming" style="max-width: 70%;">
+                            Hi please how much is teeth whitening
+                            <div class="time">10:32 AM</div>
+                        </div>
+                        <div class="msg outgoing" style="max-width: 70%;">
+                            Hi! Welcome to HarbourView Dental. Teeth whitening starts from GHS 800. The final cost depends on the dentist's assessment during your consultation.
+                            <div class="time">10:32 AM ✓✓</div>
+                        </div>
+                        <div class="msg outgoing" style="max-width: 70%;">
+                            Would you like me to check available appointment times for you?
+                            <div class="time">10:32 AM ✓✓</div>
+                        </div>
+                        <div class="msg incoming" style="max-width: 70%;">
+                            Yes please. Do you have anything next week?
+                            <div class="time">10:34 AM</div>
+                        </div>
+                        <div class="msg outgoing" style="max-width: 70%;">
+                            I have Tuesday at 10:00 AM and Wednesday at 2:30 PM. Which works better for you?
+                            <div class="time">10:34 AM ✓✓</div>
+                        </div>
+                        <div class="msg incoming" style="max-width: 70%;">
+                            Wednesday 2:30 is good
+                            <div class="time">10:35 AM</div>
+                        </div>
+                        <div class="msg outgoing" style="max-width: 70%;">
+                            You're booked for <b>Wednesday, 17 September at 2:30 PM</b>. 📍 East Legon, Accra. I'll remind you before your appointment.
+                            <div class="time">10:35 AM ✓✓</div>
+                        </div>
+                    </div>
+                    <div style="padding: 0.5rem 0.75rem; border-top: 1px solid var(--border); display: flex; gap: 0.5rem;">
+                        <input type="text" placeholder="Type a message as staff..." style="flex: 1; padding: 0.4rem 0.6rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.8rem;">
+                        <button style="background: var(--primary); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer;">Send</button>
+                    </div>
+                </div>
+                <div class="conv-sidebar">
+                    <h5>Patient Info</h5>
+                    <div class="field">
+                        <div class="field-label">Name</div>
+                        <div class="field-value">Ama K.</div>
+                    </div>
+                    <div class="field">
+                        <div class="field-label">Phone</div>
+                        <div class="field-value">+233 XX XXX XXXX</div>
+                    </div>
+                    <div class="field">
+                        <div class="field-label">Source</div>
+                        <div class="field-value">Facebook Ad</div>
+                    </div>
+
+                    <h5>Status</h5>
+                    <div class="field">
+                        <div class="field-label">Intent</div>
+                        <div class="field-value">Teeth Whitening</div>
+                    </div>
+                    <div class="field">
+                        <div class="field-label">Lead Level</div>
+                        <div class="field-value">High</div>
+                    </div>
+                    <div class="field">
+                        <div class="field-label">Status</div>
+                        <div class="field-value"><span class="status-badge booked">Booked</span></div>
+                    </div>
+
+                    <h5>Appointment</h5>
+                    <div class="field">
+                        <div class="field-label">Date</div>
+                        <div class="field-value">17 Sept 2026</div>
+                    </div>
+                    <div class="field">
+                        <div class="field-label">Time</div>
+                        <div class="field-value">2:30 PM</div>
+                    </div>
+                    <div class="field">
+                        <div class="field-label">Service</div>
+                        <div class="field-value">Whitening Consult</div>
+                    </div>
+
+                    <h5>Actions</h5>
+                    <div style="display: flex; flex-direction: column; gap: 0.3rem;">
+                        <button style="background: var(--primary); color: white; border: none; padding: 0.3rem; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">Take Over Conversation</button>
+                        <button style="background: var(--accent); color: var(--text); border: none; padding: 0.3rem; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">Reschedule</button>
+                        <button style="background: #fce4ec; color: var(--red); border: 1px solid #f8bbd0; padding: 0.3rem; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">Cancel Appointment</button>
+                    </div>
+
+                    <h5>Attendance</h5>
+                    <div class="field">
+                        <div class="field-label">Status</div>
+                        <div class="field-value"><span class="status-badge new">⏳ Pending</span></div>
+                    </div>
+                    <div class="field">
+                        <div class="field-label">Check-in</div>
+                        <div class="field-value" style="font-size: 0.7rem; color: var(--text-muted);">Not yet sent</div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.3rem; margin-top: 0.3rem;">
+                        <button style="background: var(--green); color: white; border: none; padding: 0.3rem; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">✓ Mark as Attended</button>
+                        <button style="background: #fce4ec; color: var(--red); border: 1px solid #f8bbd0; padding: 0.3rem; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">✗ Mark as No-Show</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: AI WORKFLOW -->
+    <section id="ai-workflow">
+        <div class="section-header">
+            <h2>4. AI Workflow</h2>
+            <p class="subtitle">How Franel processes a message from start to response</p>
+        </div>
+
+        <p>
+            A critical design principle guides this workflow: the LLM handles language and conversation, while a deterministic workflow layer handles business logic. Franel does not arbitrarily decide every operation. The conversation and the business rules are separated by design.
+        </p>
+
+        <h3>4.1 LLM vs Deterministic Workflow</h3>
+        <div class="workflow-row">
+            <div class="workflow-box llm">
+                <h4>🧠 LLM / Franel handles</h4>
+                <ul>
+                    <li>Language understanding</li>
+                    <li>Natural conversation</li>
+                    <li>Intent recognition</li>
+                    <li>Context from prior messages</li>
+                    <li>Choosing the conversational next step</li>
+                    <li>Qualification through dialogue</li>
+                    <li>Closing patterns</li>
+                    <li>Emotional register (warm, calm, professional)</li>
+                </ul>
+            </div>
+            <div class="workflow-box workflow">
+                <h4>⚙️ Deterministic workflow handles</h4>
+                <ul>
+                    <li>Calendar availability checks</li>
+                    <li>Appointment creation and confirmation</li>
+                    <li>Lead state transitions</li>
+                    <li>Follow-up scheduling</li>
+                    <li>Escalation routing</li>
+                    <li>Database updates</li>
+                    <li>Clinic rule enforcement</li>
+                    <li>Reminder timing</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card highlight">
+            <h4>Why this separation matters</h4>
+            <p>
+                If the LLM decides when to book, when to follow up, and what state a lead is in, debugging becomes nearly impossible. By separating conversation from business logic, we can test each independently. The LLM can be evaluated on conversation quality. The workflow can be evaluated on booking accuracy. Problems are traceable to a specific layer.
+            </p>
+        </div>
+
+        <h3>4.2 Message Processing Flow</h3>
+        <div class="flow-diagram">
+            <div class="flow-row">
+                <div class="flow-node input">Patient Message</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node input">Voice? → Transcribe</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node input">Image? → Acknowledge</div>
+            </div>
+            <div class="flow-arrow down">↓</div>
+            <div class="flow-row">
+                <div class="flow-node process">Load Conversation State</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node process">Load Clinic Knowledge</div>
+            </div>
+            <div class="flow-arrow down">↓</div>
+            <div class="flow-row">
+                <div class="flow-node decision">Classify Intent(s)</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node decision">Check Emergency Tier</div>
+            </div>
+            <div class="flow-arrow down">↓</div>
+            <div class="flow-row">
+                <div class="flow-node process">Determine Next-Best-Action</div>
+            </div>
+            <div class="flow-arrow down">↓</div>
+            <div class="flow-row">
+                <div class="flow-node decision">Needs calendar?</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node process">Check Availability (tool)</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node process">Offer Slots</div>
+            </div>
+            <div class="flow-arrow down">↓</div>
+            <div class="flow-row">
+                <div class="flow-node decision">Patient selected slot?</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node process">Re-validate Slot</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node process">Create Appointment (tool)</div>
+            </div>
+            <div class="flow-arrow down">↓</div>
+            <div class="flow-row">
+                <div class="flow-node output">Generate Response</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node output">Update Lead State</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node output">Send to Patient</div>
+            </div>
+            <div class="flow-arrow down">↓</div>
+            <div class="flow-row">
+                <div class="flow-node alert">Escalation needed?</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node alert">Alert Staff</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node output">Preserve Context</div>
+            </div>
+        </div>
+
+        <h3>4.3 Intent Classification</h3>
+        <p>
+            Franel classifies incoming messages into intents before acting. A single message can carry multiple intents. When it does, Franel addresses them together in one natural reply rather than forcing separate turns.
+        </p>
+        <div class="card">
+            <h4>Top-level intents</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem;">
+                <span style="background: #e3f2fd; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 500;">BOOK_APPOINTMENT</span>
+                <span style="background: #e8f5e9; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 500;">SERVICE_INFORMATION</span>
+                <span style="background: #fff3e0; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 500;">PRICE_INQUIRY</span>
+                <span style="background: #f3e5f5; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 500;">LOCATION</span>
+                <span style="background: #e0f2f1; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 500;">OPENING_HOURS</span>
+                <span style="background: #fce4ec; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 500;">URGENT_OR_EMERGENCY</span>
+                <span style="background: #e3f2fd; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 500;">RESCHEDULE</span>
+                <span style="background: #fce4ec; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 500;">CANCEL_APPOINTMENT</span>
+                <span style="background: #fff3e0; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 500;">FOLLOW_UP</span>
+                <span style="background: #fce4ec; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 500;">COMPLAINT</span>
+                <span style="background: #f3e5f5; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 500;">HUMAN_SUPPORT</span>
+                <span style="background: #e0f2f1; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 500;">GENERAL_QUESTION</span>
+                <span style="background: #e8f5e9; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 500;">CONFIRM_ATTENDANCE</span>
+                <span style="background: #fce4ec; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 500;">REPORT_NO_SHOW</span>
+            </div>
+            <h4 style="margin-top: 1rem;">Service-level intents</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem;">
+                <span style="background: #f5f5f5; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">TEETH_CLEANING</span>
+                <span style="background: #f5f5f5; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">TEETH_WHITENING</span>
+                <span style="background: #f5f5f5; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">FILLING</span>
+                <span style="background: #f5f5f5; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">EXTRACTION</span>
+                <span style="background: #f5f5f5; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">ROOT_CANAL</span>
+                <span style="background: #f5f5f5; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">BRACES_OR_ORTHODONTICS</span>
+                <span style="background: #f5f5f5; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">DENTAL_IMPLANTS</span>
+                <span style="background: #f5f5f5; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">DENTURES</span>
+                <span style="background: #f5f5f5; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">CROWNS_OR_BRIDGES</span>
+                <span style="background: #f5f5f5; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">PEDIATRIC_DENTISTRY</span>
+                <span style="background: #f5f5f5; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">COSMETIC_DENTISTRY</span>
+                <span style="background: #f5f5f5; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">TOOTH_PAIN</span>
+            </div>
+        </div>
+
+        <h3>4.4 Next-Best-Action Priority</h3>
+        <p>
+            At every turn, Franel decides what to do next based on this priority order:
+        </p>
+        <div class="card">
+            <ol>
+                <li><strong>Resolve a Tier 1 emergency signal.</strong> If the patient describes symptoms that need immediate care, this comes before everything else.</li>
+                <li><strong>Answer the patient's actual question.</strong> If they asked about price, tell them the price. Don't defer the answer to squeeze in a qualification question.</li>
+                <li><strong>Resolve a blocker to booking.</strong> If something is preventing the patient from booking (unclear pricing, schedule conflict, missing information), address it.</li>
+                <li><strong>Collect the one missing piece.</strong> If only one piece of information stands between the current state and the next step, ask for it.</li>
+                <li><strong>Offer a relevant appointment.</strong> If the patient is ready and qualified, offer available slots.</li>
+                <li><strong>Complete the booking.</strong> If the patient has selected a slot, confirm and create the appointment.</li>
+                <li><strong>Confirm and prepare.</strong> If the appointment is booked, confirm the details and set expectations.</li>
+                <li><strong>Schedule follow-up.</strong> If the patient is interested but not ready, schedule appropriate follow-up.</li>
+                <li><strong>Escalate.</strong> If the situation requires human judgment, escalate at the appropriate tier.</li>
+            </ol>
+        </div>
+
+        <h3>4.5 Qualification Flow</h3>
+        <p>
+            Qualification is treatment-specific, not a universal questionnaire. The questions Franel asks depend on what service the patient is interested in.
+        </p>
+        <div class="req-grid">
+            <div class="req-card">
+                <h4>Whitening inquiry</h4>
+                <ul>
+                    <li>What does the patient want to achieve?</li>
+                    <li>Have they had whitening before?</li>
+                    <li>Are they looking for an appointment soon?</li>
+                </ul>
+            </div>
+            <div class="req-card">
+                <h4>Braces inquiry</h4>
+                <ul>
+                    <li>Is this for self or someone else?</li>
+                    <li>Child, teen, or adult?</li>
+                    <li>Main concern?</li>
+                    <li>Interested in consultation?</li>
+                </ul>
+            </div>
+            <div class="req-card">
+                <h4>Tooth pain</h4>
+                <ul>
+                    <li>What symptoms?</li>
+                    <li>When did they start?</li>
+                    <li>Severe or worsening?</li>
+                    <li>Swelling or bleeding?</li>
+                </ul>
+            </div>
+            <div class="req-card">
+                <h4>Child dentistry</h4>
+                <ul>
+                    <li>Age of the child?</li>
+                    <li>Specific concern or general check-up?</li>
+                    <li>Previous dental visits?</li>
+                    <li>Preferred timing?</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: ARCHITECTURE -->
+    <section id="architecture">
+        <div class="section-header">
+            <h2>5. System Architecture</h2>
+            <p class="subtitle">How the components fit together, with multi-tenant isolation</p>
+        </div>
+
+        <h3>5.1 Architecture Overview</h3>
+        <p>
+            Franel is built on Hermes Agent. The architecture separates the shared Franel core (personality, conversation logic, skill) from clinic-specific configuration (knowledge, calendar, staff, policies). Each clinic's data is fully isolated from every other clinic.
+        </p>
+
+        <div class="arch-diagram">
+            <div class="arch-layer">
+                <div class="arch-layer-label">PATIENT LAYER</div>
+                <div class="arch-row">
+                    <div class="arch-box core">Patient</div>
+                    <span class="flow-arrow" style="font-size: 1.5rem;">→</span>
+                    <div class="arch-box tool">WhatsApp</div>
+                    <span class="flow-arrow" style="font-size: 1.5rem;">→</span>
+                    <div class="arch-box tool">Voice Transcription</div>
+                    <span class="flow-arrow" style="font-size: 1.5rem;">→</span>
+                    <div class="arch-box tool">Image Handling</div>
+                </div>
+            </div>
+
+            <div class="arch-arrow">↓</div>
+
+            <div class="arch-layer">
+                <div class="arch-layer-label">FRANEL CORE (shared across clinics)</div>
+                <div class="arch-row">
+                    <div class="arch-box core">SOUL.md<br><small>Identity & Personality</small></div>
+                    <div class="arch-box core">SKILL.md<br><small>Operational Behavior</small></div>
+                    <div class="arch-box core">Hermes Agent<br><small>LLM + Workflow Engine</small></div>
+                </div>
+            </div>
+
+            <div class="arch-arrow">↓</div>
+
+            <div class="arch-layer">
+                <div class="arch-layer-label">CLINIC CONFIGURATION (per clinic)</div>
+                <div class="arch-row">
+                    <div class="arch-box config">Clinic Profile<br><small>Services, Prices, Hours</small></div>
+                    <div class="arch-box config">Booking Rules<br><small>Cancellation, Deposit</small></div>
+                    <div class="arch-box config">Staff Contacts<br><small>Escalation Routing</small></div>
+                    <div class="arch-box config">FAQs<br><small>Approved Responses</small></div>
+                </div>
+            </div>
+
+            <div class="arch-arrow">↓</div>
+
+            <div class="arch-layer">
+                <div class="arch-layer-label">TOOLS & INTEGRATIONS</div>
+                <div class="arch-row">
+                    <div class="arch-box tool">Google Calendar<br><small>Per-clinic calendar</small></div>
+                    <div class="arch-box tool">Supabase<br><small>Per-clinic database</small></div>
+                    <div class="arch-box tool">Follow-up / Cron<br><small>Scheduled messages</small></div>
+                    <div class="arch-box tool">Escalation<br><small>Staff notification</small></div>
+                </div>
+            </div>
+
+            <div class="arch-arrow">↓</div>
+
+            <div class="arch-layer">
+                <div class="arch-layer-label">OUTPUT</div>
+                <div class="arch-row">
+                    <div class="arch-box output">Admin Dashboard<br><small>Per-clinic web view</small></div>
+                    <div class="arch-box output">Lead / Appointment Reports<br><small>Conversion funnel</small></div>
+                    <div class="arch-box output">Staff Alerts<br><small>Escalation notifications</small></div>
+                </div>
+            </div>
+        </div>
+
+        <h3>5.2 Multi-Tenant Isolation</h3>
+        <p>
+            Each clinic operates in its own isolated environment. Franel's core personality and conversation logic are shared, but everything clinic-specific is separated. Clinic A's patient data is never visible to Clinic B's dashboard. Clinic A's calendar is never checked when booking for Clinic B.
+        </p>
+
+        <div class="arch-diagram">
+            <div class="arch-tenant">
+                <div class="tenant-card">
+                    <div class="clinic-name">Clinic A</div>
+                    <div class="clinic-items">Calendar A<br>Supabase A<br>Dashboard A<br>Conversations A</div>
+                </div>
+                <div class="tenant-card">
+                    <div class="clinic-name">Clinic B</div>
+                    <div class="clinic-items">Calendar B<br>Supabase B<br>Dashboard B<br>Conversations B</div>
+                </div>
+                <div class="tenant-card">
+                    <div class="clinic-name">Clinic C</div>
+                    <div class="clinic-items">Calendar C<br>Supabase C<br>Dashboard C<br>Conversations C</div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+                Each clinic's data is fully isolated. Franel core (SOUL.md + SKILL.md) is shared across all clinics.
+            </div>
+        </div>
+
+        <h3>5.3 POC vs Production</h3>
+        <div class="req-grid">
+            <div class="req-card">
+                <h4>POC Architecture</h4>
+                <ul>
+                    <li>Hermes Agent (core runtime)</li>
+                    <li>Baileys WhatsApp bridge (unofficial, no 24-hour window restriction)</li>
+                    <li>One dedicated test WhatsApp number</li>
+                    <li>Google Calendar (one clinic)</li>
+                    <li>Supabase (one clinic database)</li>
+                    <li>Admin dashboard (web-based, one clinic view)</li>
+                    <li>Closed stakeholder testing</li>
+                </ul>
+            </div>
+            <div class="req-card">
+                <h4>Production Architecture</h4>
+                <ul>
+                    <li>Hermes Agent (core runtime)</li>
+                    <li>WhatsApp Cloud API (official Meta integration)</li>
+                    <li>Per-clinic WhatsApp numbers</li>
+                    <li>Google Calendar (per clinic)</li>
+                    <li>Supabase (per clinic database, row-level isolation)</li>
+                    <li>Admin dashboard (multi-clinic view)</li>
+                    <li>Template message infrastructure (for24-hour window compliance)</li>
+                    <li>Follow-up scheduling with state checking</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card highlight">
+            <h4>WhatsApp 24-hour window design</h4>
+            <p>
+                For production, the follow-up module must handle the WhatsApp Business API's customer service window. The adapter pattern allows the POC to work with Baileys (no restriction) while the production system plugs in Cloud API template message support without changing the core follow-up logic.
+            </p>
+            <div style="background: var(--bg); padding: 0.75rem; border-radius: 6px; font-size: 0.85rem; margin-top: 0.5rem;">
+                <strong>Follow-up routing logic:</strong><br>
+                1. Check: has the patient messaged in the last 24 hours?<br>
+                2. If yes → send free-form message<br>
+                3. If no → check if a template message is approved for this follow-up type<br>
+                4. If template available → send template<br>
+                5. If no template → skip this follow-up, log as blocked
+            </div>
+        </div>
+
+        <h3>5.4 Technology Stack</h3>
+        <table>
+            <tr>
+                <th>Component</th>
+                <th>Technology</th>
+                <th>Why</th>
+            </tr>
+            <tr>
+                <td>AI Agent Runtime</td>
+                <td>Hermes Agent</td>
+                <td>Handles LLM integration, tool calling, WhatsApp bridge, cron scheduling</td>
+            </tr>
+            <tr>
+                <td>WhatsApp (POC)</td>
+                <td>Baileys bridge</td>
+                <td>Fast to prototype, no Meta business verification needed</td>
+            </tr>
+            <tr>
+                <td>WhatsApp (Production)</td>
+                <td>Meta WhatsApp Cloud API</td>
+                <td>Official, scalable, supports template messages</td>
+            </tr>
+            <tr>
+                <td>Calendar</td>
+                <td>Google Calendar API</td>
+                <td>Widely used by clinics, real-time availability checking</td>
+            </tr>
+            <tr>
+                <td>Database</td>
+                <td>Supabase (PostgreSQL)</td>
+                <td>Per-clinic row-level security, real-time subscriptions for dashboard</td>
+            </tr>
+            <tr>
+                <td>Dashboard</td>
+                <td>React JS</td>
+                <td>Accessible via browser, no install required. Component-based UI with real-time data from Supabase</td>
+            </tr>
+            <tr>
+                <td>Voice Transcription</td>
+                <td>Speech-to-text API</td>
+                <td>Converts WhatsApp voice messages to text for processing</td>
+            </tr>
+            <tr>
+                <td>Follow-up Scheduling</td>
+                <td>Hermes cron + Supabase state</td>
+                <td>Scheduled tasks check patient state before sending, avoid stale messages</td>
+            </tr>
+        </table>
+    </section>
+
+</div>
+
+<footer>
+    Group 18 — Frank Owusu Ansah, Nelson M.K. Ador | Codetrain AI Talent Accelerator 2026 | Week 2 Deliverables | Healthcare & Health Access
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,235 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: "Manrope", "Inter", sans-serif;
+
+  /* Brand */
+  --color-primary: #0e8074;
+  --color-primary-dark: #0a6e63;
+  --color-primary-soft: #e0f2ef;
+  --color-accent: #4f5ded;
+  --color-accent-soft: #e9ebfd;
+  --color-navy: #0f2740;
+  --color-navy-2: #16344f;
+
+  /* Surfaces (light) */
+  --color-background: #f4f6f9;
+  --color-surface: #ffffff;
+  --color-surface-2: #eef2f7;
+  --color-card: #ffffff;
+  --color-border: #e3e9f0;
+  --color-border-strong: #d4dde8;
+  --color-foreground: #111f30;
+  --color-muted: #5f7186;
+  --color-muted-2: #8a99ab;
+
+  /* Status (light) */
+  --color-success: #15803d;
+  --color-success-soft: #dcfce7;
+  --color-warning: #b45309;
+  --color-warning-soft: #fef3c7;
+  --color-danger: #dc2626;
+  --color-danger-soft: #fee2e2;
+  --color-info: #2563eb;
+  --color-info-soft: #dbeafe;
+  --color-violet: #7c3aed;
+  --color-violet-soft: #ede9fe;
+
+  /* Shape + depth */
+  --radius-card: 14px;
+  --radius-control: 10px;
+  --shadow-card: 0 1px 2px rgba(16, 32, 48, 0.04), 0 8px 24px -12px rgba(16, 32, 48, 0.12);
+  --shadow-pop: 0 12px 32px -8px rgba(16, 32, 48, 0.22);
+  --shadow-ring: 0 0 0 3px rgba(14, 128, 116, 0.16);
+
+  /* Motion */
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Dark theme — override the same variables so every utility
+   (which compiles to var(--color-*)) re-themes automatically. */
+.dark {
+  --color-primary: #17b8a4;
+  --color-primary-dark: #2fd8c2;
+  --color-primary-soft: rgba(23, 184, 164, 0.12);
+  --color-accent: #7d88f2;
+  --color-accent-soft: rgba(125, 136, 242, 0.12);
+
+  --color-background: #080b16;
+  --color-surface: #0f1628;
+  --color-surface-2: #131a2e;
+  --color-card: #131a2e;
+  --color-border: rgba(255, 255, 255, 0.07);
+  --color-border-strong: rgba(255, 255, 255, 0.14);
+  --color-foreground: #e2e8f0;
+  --color-muted: #8a99ab;
+  --color-muted-2: #64748b;
+
+  --color-success: #34d399;
+  --color-success-soft: rgba(52, 211, 153, 0.12);
+  --color-warning: #fbbf24;
+  --color-warning-soft: rgba(251, 191, 36, 0.12);
+  --color-danger: #f87171;
+  --color-danger-soft: rgba(248, 113, 113, 0.12);
+  --color-info: #60a5fa;
+  --color-info-soft: rgba(96, 165, 250, 0.12);
+  --color-violet: #a78bfa;
+  --color-violet-soft: rgba(167, 139, 250, 0.12);
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 28px -12px rgba(0, 0, 0, 0.5);
+  --shadow-pop: 0 16px 40px -10px rgba(0, 0, 0, 0.6);
+  --shadow-ring: 0 0 0 3px rgba(23, 184, 164, 0.2);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-primary) 24%, transparent);
+  }
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted-2);
+}
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* Animations */
+@keyframes fr-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+@keyframes fr-slide-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes fr-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes fr-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fr-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+@keyframes fr-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+@keyframes fr-pulse-dot {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-primary) 45%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.anim-pop {
+  animation: fr-pop 0.18s var(--ease-spring);
+}
+.anim-slide-right {
+  animation: fr-slide-right 0.24s var(--ease-spring);
+}
+.anim-slide-up {
+  animation: fr-slide-up 0.24s var(--ease-spring);
+}
+.anim-fade {
+  animation: fr-fade 0.15s ease-out;
+}
+.anim-blink {
+  animation: fr-blink 1.6s ease-in-out infinite;
+}
+.pulse-dot {
+  animation: fr-pulse-dot 2s ease-out infinite;
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-foreground) 6%, transparent),
+    transparent
+  );
+  animation: fr-shimmer 1.4s infinite;
+}
