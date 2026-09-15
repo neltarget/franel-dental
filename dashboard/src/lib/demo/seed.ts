@@ -16,6 +16,20 @@ export const DEMO_USER_ID = "demo-user-mile3"
 export const DEMO_CLINIC_NAME = "Mile 3 Dental Studio"
 export const DEMO_CLINIC_TAGLINE = "East Legon, Accra · sample data"
 
+/** Canned patient replies used by the demo "simulate a WhatsApp inbound" control. */
+export const DEMO_SIM_REPLIES: string[] = [
+  "Actually, can you hold Thursday 11:15 for me after all?",
+  "Is there a discount if I book whitening together with a check-up?",
+  "I can only come after 3pm — do you have any slots in the evening?",
+  "How much will the follow-up be after the wisdom tooth removal?",
+  "The pain got worse this morning. Can I still come in today?",
+  "Is mobile money accepted for the payment plan?",
+  "Can we move my appointment to tomorrow morning if possible?",
+  "Just confirming — my number is on file, right?",
+  "Do you do X-rays on the same day as the filling?",
+  "What time do you close on Saturdays?",
+]
+
 export type DemoMessage = Omit<Message, "staff">
 export interface DemoAppointment {
   id: string

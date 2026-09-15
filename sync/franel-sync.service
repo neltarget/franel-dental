@@ -1,0 +1,20 @@
+[Unit]
+Description=Franel sync daemon (WhatsApp/Calendar <-> Supabase dashboard)
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+WorkingDirectory=/home/adorneltarget/franel-sync
+Environment="FRANEL_GAPI_PYTHON=/home/adorneltarget/.hermes/hermes-agent/venv/bin/python3"
+Environment="PATH=/home/adorneltarget/.hermes/hermes-agent/venv/bin:/home/adorneltarget/.hermes/node/bin:/home/adorneltarget/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+ExecStart=/usr/bin/python3 /home/adorneltarget/franel-sync/franel_sync.py
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

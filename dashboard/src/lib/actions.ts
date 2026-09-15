@@ -4,6 +4,7 @@ import {
   getDemoSnapshot,
   isDemoClinic,
   demoCreateMessage,
+  demoSimulatePatientMessage,
   demoUpdateConversationStatus,
   demoCreateAppointment,
   demoCancelAppointment,
@@ -57,6 +58,12 @@ export async function sendStaffMessage(
     .eq("id", conversationId)
 
   return { error: null, id: data?.id }
+}
+
+export async function simulatePatientReply(conversationId: string): Promise<OpResult & { id?: string }> {
+  const demo = getDemoSnapshot()
+  if (demo) return demoSimulatePatientMessage(demo.rows, conversationId)
+  return { error: "Patient simulation is only available in demo mode" }
 }
 
 export async function updateConversationStatus(

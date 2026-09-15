@@ -10,7 +10,7 @@ import type {
   Patient,
   Staff,
 } from "@/lib/types"
-import { buildDemoSeed, DEMO_CLINIC_ID, type DemoAppointment, type DemoRows } from "./seed"
+import { buildDemoSeed, DEMO_CLINIC_ID, DEMO_SIM_REPLIES, type DemoAppointment, type DemoMessage, type DemoRows } from "./seed"
 
 export interface DemoSnapshot {
   version: number
@@ -202,6 +202,43 @@ export function demoCreateMessage(
     messages: [...snapshotRows.messages, message],
     conversations: snapshotRows.conversations.map((c) =>
       c.id === args.conversation_id
+        ? {
+            ...c,
+            last_message_at: now,
+            last_message_preview: content.length > 80 ? content.slice(0, 77) + "…" : content,
+            updated_at: now,
+          }
+        : c
+    ),
+  }
+  commit(rows)
+  return { error: null, id }
+}
+
+export function demoSimulatePatientMessage(
+  snapshotRows: DemoRows,
+  conversationId: string
+): { error: string | null; id?: string } {
+  const exists = clinicScoped(snapshotRows.conversations).some((c) => c.id === conversationId)
+  if (!exists) return { error: "Conversation not found" }
+  const content = DEMO_SIM_REPLIES[Math.floor(Math.random() * DEMO_SIM_REPLIES.length)]
+  const now = nowIso()
+  const id = `demo-sim-${Date.now()}`
+  const message: DemoMessage = {
+    id,
+    conversation_id: conversationId,
+    sender: "patient",
+    staff_id: null,
+    content,
+    message_type: "text",
+    metadata: {},
+    created_at: now,
+  }
+  const rows: DemoRows = {
+    ...snapshotRows,
+    messages: [...snapshotRows.messages, message],
+    conversations: snapshotRows.conversations.map((c) =>
+      c.id === conversationId
         ? {
             ...c,
             last_message_at: now,

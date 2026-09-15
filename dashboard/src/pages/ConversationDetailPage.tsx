@@ -17,8 +17,9 @@ import {
 } from "lucide-react"
 import { useLayoutData } from "@/components/layout/Layout"
 import { useConversation } from "@/hooks/useData"
+import { useAuth } from "@/hooks/useAuth"
 import { useToast } from "@/components/ui/Toast"
-import { updateConversationStatus, sendStaffMessage, createEscalation, setEscalationStatus, updatePatient } from "@/lib/actions"
+import { updateConversationStatus, sendStaffMessage, createEscalation, setEscalationStatus, updatePatient, simulatePatientReply } from "@/lib/actions"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card"
 import { Button } from "@/components/ui/Button"
 import { Badge } from "@/components/ui/Badge"
@@ -91,8 +92,11 @@ export function ConversationDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { clinicId, staff, appointments } = useLayoutData()
+  const { isDemo } = useAuth()
   const { conversation, loading, error, refetch } = useConversation(clinicId, id ?? null)
   const { toast } = useToast()
+
+  const [simulating, setSimulating] = useState(false)
 
   const [reply, setReply] = useState("")
   const [sending, setSending] = useState(false)
@@ -128,6 +132,16 @@ export function ConversationDetailPage() {
       setReply("")
       toast("Reply sent to WhatsApp")
     }
+    refetch()
+  }
+
+  async function handleSimulatePatient() {
+    if (!id || simulating) return
+    setSimulating(true)
+    const res = await simulatePatientReply(id)
+    setSimulating(false)
+    if (res.error) toast("Simulation failed", { description: res.error, variant: "danger" })
+    else toast("Patient replied via WhatsApp (simulated)")
     refetch()
   }
 
@@ -279,9 +293,23 @@ export function ConversationDetailPage() {
               Reply
             </Button>
           </div>
-          <p className="mt-1.5 text-[10px] text-muted-2">
-            Replies are delivered to {patient?.phone} via your clinic WhatsApp number.
-          </p>
+          <div className="mt-1.5 flex items-center justify-between gap-2">
+            <p className="text-[10px] text-muted-2">
+              Replies are delivered to {patient?.phone} via your clinic WhatsApp number.
+            </p>
+            {isDemo && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSimulatePatient}
+                disabled={simulating}
+                title="Demo only — drops a simulated WhatsApp reply from the patient"
+              >
+                <Play size={12} className={simulating ? "animate-pulse" : undefined} />
+                {simulating ? "Sending…" : "Simulate patient reply"}
+              </Button>
+            )}
+          </div>
         </div>
       </Card>
 
