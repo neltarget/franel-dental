@@ -63,7 +63,7 @@ export function useLayoutData(): LayoutData {
 }
 
 export default function Layout({ children }: { children?: ReactNode }) {
-  const { user } = useAuth()
+  const { user, isDemo } = useAuth()
   const { clinicId, staff, loading: authLoading } = useStaffClinicId(user?.id ?? null)
 
   const { clinic, loading: clinicLoading } = useClinic(clinicId)
@@ -124,12 +124,13 @@ export default function Layout({ children }: { children?: ReactNode }) {
 
   const refetch = useMemo(
     () => () => {
+      if (isDemo) return
       refetchConv()
       refetchAppt()
       refetchStats()
       refetchStaff()
     },
-    [refetchConv, refetchAppt, refetchStats, refetchStaff]
+    [refetchConv, refetchAppt, refetchStats, refetchStaff, isDemo]
   )
 
   // Global manual refresh from the Topbar

@@ -1,5 +1,19 @@
 import { supabase } from "@/lib/supabase"
 import type { ClinicConfig, ConversationStatus, EscalationTier } from "@/lib/types"
+import {
+  getDemoSnapshot,
+  isDemoClinic,
+  demoCreateMessage,
+  demoUpdateConversationStatus,
+  demoCreateAppointment,
+  demoCancelAppointment,
+  demoMarkAttendance,
+  demoCreateEscalation,
+  demoSetEscalationStatus,
+  demoUpdatePatient,
+  demoUpsertClinicConfig,
+  demoUpdateClinic,
+} from "@/lib/demo/store"
 
 interface OpResult {
   error: string | null
@@ -14,6 +28,9 @@ export async function sendStaffMessage(
   content: string,
   staffId: string | null
 ): Promise<OpResult & { id?: string }> {
+  const demo = getDemoSnapshot()
+  if (demo) return demoCreateMessage(demo.rows, { conversation_id: conversationId, content, staff_id: staffId })
+
   const { data, error } = await supabase
     .from("messages")
     .insert({
@@ -46,6 +63,9 @@ export async function updateConversationStatus(
   conversationId: string,
   status: ConversationStatus
 ): Promise<OpResult> {
+  const demo = getDemoSnapshot()
+  if (demo) return demoUpdateConversationStatus(demo.rows, conversationId, status)
+
   const { error } = await supabase
     .from("conversations")
     .update({ status, updated_at: new Date().toISOString() })
@@ -65,6 +85,9 @@ export interface NewAppointment {
 }
 
 export async function createAppointment(a: NewAppointment): Promise<OpResult & { id?: string }> {
+  const demo = getDemoSnapshot()
+  if (demo) return demoCreateAppointment(demo.rows, a)
+
   const { data, error } = await supabase
     .from("appointments")
     .insert({
@@ -84,6 +107,9 @@ export async function createAppointment(a: NewAppointment): Promise<OpResult & {
 }
 
 export async function cancelAppointment(id: string): Promise<OpResult> {
+  const demo = getDemoSnapshot()
+  if (demo) return demoCancelAppointment(demo.rows, id)
+
   const { error } = await supabase
     .from("appointments")
     .update({ status: "cancelled", attendance: "cancelled", updated_at: new Date().toISOString() })
@@ -95,6 +121,9 @@ export async function markAttendance(
   id: string,
   attendance: "attended" | "no-show" | "pending"
 ): Promise<OpResult> {
+  const demo = getDemoSnapshot()
+  if (demo) return demoMarkAttendance(demo.rows, id, attendance)
+
   const { error } = await supabase
     .from("appointments")
     .update({
@@ -114,6 +143,11 @@ export async function createEscalation(
   tier: EscalationTier,
   description: string
 ): Promise<OpResult & { id?: string }> {
+  const demo = getDemoSnapshot()
+  if (demo && isDemoClinic(clinicId)) {
+    return demoCreateEscalation(demo.rows, { conversationId, clinicId, tier, description })
+  }
+
   const { data, error } = await supabase
     .from("escalations")
     .insert({
@@ -132,6 +166,9 @@ export async function setEscalationStatus(
   id: string,
   status: "in-progress" | "resolved"
 ): Promise<OpResult> {
+  const demo = getDemoSnapshot()
+  if (demo) return demoSetEscalationStatus(demo.rows, id, status)
+
   const patch: Record<string, unknown> = { status }
   if (status === "resolved") patch.resolved_at = new Date().toISOString()
   const { error } = await supabase.from("escalations").update(patch).eq("id", id)
@@ -142,6 +179,9 @@ export async function updatePatient(
   id: string,
   patch: { notes?: string | null }
 ): Promise<OpResult> {
+  const demo = getDemoSnapshot()
+  if (demo) return demoUpdatePatient(demo.rows, id, patch)
+
   const { error } = await supabase
     .from("patients")
     .update({ ...patch, updated_at: new Date().toISOString() })
@@ -158,6 +198,9 @@ export async function upsertClinicConfig(
     >
   >
 ): Promise<OpResult> {
+  const demo = getDemoSnapshot()
+  if (demo && isDemoClinic(clinicId)) return demoUpsertClinicConfig(demo.rows, clinicId, patch)
+
   const { error } = await supabase
     .from("clinic_config")
     .upsert(
@@ -180,6 +223,9 @@ export interface ClinicPatch {
 }
 
 export async function updateClinic(clinicId: string, patch: ClinicPatch): Promise<OpResult> {
+  const demo = getDemoSnapshot()
+  if (demo && isDemoClinic(clinicId)) return demoUpdateClinic(demo.rows, clinicId, patch)
+
   const { error } = await supabase
     .from("clinics")
     .update({ ...patch, updated_at: new Date().toISOString() })

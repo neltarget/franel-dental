@@ -1,8 +1,38 @@
 import { useState, useEffect, useCallback } from "react"
 import { supabase } from "@/lib/supabase"
 import type { Conversation, Message, Appointment, Escalation, Patient, ClinicConfig, Staff, FollowUp } from "@/lib/types"
+import {
+  demoAppointments,
+  demoClinic,
+  demoConfig,
+  demoConversations,
+  demoConversation,
+  demoEscalations,
+  demoFollowUps,
+  demoPatients,
+  demoStaffByAuthUser,
+  demoStaffList,
+  isDemoClinic,
+  useDemo,
+} from "@/lib/demo/store"
+
+// In demo mode the data lives in the in-memory store (see lib/demo). The
+// hook's demo branch re-derives from it on every store change, so any
+// manual refetch must be a no-op here — firing the real Supabase query
+// would race and overwrite the seeded demo rows with empty results.
+function makeDemoSafeRefetch(
+  fetcher: () => Promise<void>,
+  demo: ReturnType<typeof useDemo>,
+  clinicId: string | null
+): () => Promise<void> {
+  return async () => {
+    if (demo && isDemoClinic(clinicId)) return
+    await fetcher()
+  }
+}
 
 export function useConversations(clinicId: string | null) {
+  const demo = useDemo()
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -34,6 +64,12 @@ export function useConversations(clinicId: string | null) {
   }, [clinicId])
 
   useEffect(() => {
+    if (demo && isDemoClinic(clinicId)) {
+      setConversations(demoConversations(demo.rows))
+      setLoading(false)
+      setError(null)
+      return
+    }
     setLoading(true)
     fetchConversations()
 
@@ -47,12 +83,13 @@ export function useConversations(clinicId: string | null) {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [clinicId, fetchConversations])
+  }, [clinicId, fetchConversations, demo])
 
-  return { conversations, loading, error, refetch: fetchConversations }
+  return { conversations, loading, error, refetch: makeDemoSafeRefetch(fetchConversations, demo, clinicId) }
 }
 
 export function useConversation(clinicId: string | null, conversationId: string | null) {
+  const demo = useDemo()
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -88,6 +125,12 @@ export function useConversation(clinicId: string | null, conversationId: string 
   }, [clinicId, conversationId])
 
   useEffect(() => {
+    if (demo && isDemoClinic(clinicId)) {
+      setConversation(conversationId ? demoConversation(demo.rows, conversationId) : null)
+      setLoading(false)
+      setError(null)
+      return
+    }
     setLoading(true)
     setConversation(null)
     fetchConversation()
@@ -103,12 +146,13 @@ export function useConversation(clinicId: string | null, conversationId: string 
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [clinicId, conversationId, fetchConversation])
+  }, [clinicId, conversationId, fetchConversation, demo])
 
-  return { conversation, loading, error, refetch: fetchConversation }
+  return { conversation, loading, error, refetch: makeDemoSafeRefetch(fetchConversation, demo, clinicId) }
 }
 
 export function useAppointments(clinicId: string | null) {
+  const demo = useDemo()
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -132,6 +176,12 @@ export function useAppointments(clinicId: string | null) {
   }, [clinicId])
 
   useEffect(() => {
+    if (demo && isDemoClinic(clinicId)) {
+      setAppointments(demoAppointments(demo.rows))
+      setLoading(false)
+      setError(null)
+      return
+    }
     setLoading(true)
     fetchAppointments()
 
@@ -143,12 +193,13 @@ export function useAppointments(clinicId: string | null) {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [clinicId, fetchAppointments])
+  }, [clinicId, fetchAppointments, demo])
 
-  return { appointments, loading, error, refetch: fetchAppointments }
+  return { appointments, loading, error, refetch: makeDemoSafeRefetch(fetchAppointments, demo, clinicId) }
 }
 
 export function usePatients(clinicId: string | null) {
+  const demo = useDemo()
   const [patients, setPatients] = useState<Patient[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -171,6 +222,12 @@ export function usePatients(clinicId: string | null) {
   }, [clinicId])
 
   useEffect(() => {
+    if (demo && isDemoClinic(clinicId)) {
+      setPatients(demoPatients(demo.rows))
+      setLoading(false)
+      setError(null)
+      return
+    }
     setLoading(true)
     fetchPatients()
 
@@ -182,12 +239,13 @@ export function usePatients(clinicId: string | null) {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [clinicId, fetchPatients])
+  }, [clinicId, fetchPatients, demo])
 
-  return { patients, loading, error, refetch: fetchPatients }
+  return { patients, loading, error, refetch: makeDemoSafeRefetch(fetchPatients, demo, clinicId) }
 }
 
 export function useEscalations(clinicId: string | null, status: "active" | "all" = "active") {
+  const demo = useDemo()
   const [escalations, setEscalations] = useState<Escalation[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -214,6 +272,12 @@ export function useEscalations(clinicId: string | null, status: "active" | "all"
   }, [clinicId, status])
 
   useEffect(() => {
+    if (demo && isDemoClinic(clinicId)) {
+      setEscalations(demoEscalations(demo.rows, status))
+      setLoading(false)
+      setError(null)
+      return
+    }
     setLoading(true)
     fetchEscalations()
 
@@ -226,12 +290,13 @@ export function useEscalations(clinicId: string | null, status: "active" | "all"
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [clinicId, fetchEscalations])
+  }, [clinicId, fetchEscalations, status, demo])
 
-  return { escalations, loading, error, refetch: fetchEscalations }
+  return { escalations, loading, error, refetch: makeDemoSafeRefetch(fetchEscalations, demo, clinicId) }
 }
 
 export function useFollowUps(clinicId: string | null) {
+  const demo = useDemo()
   const [followUps, setFollowUps] = useState<FollowUp[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -248,6 +313,11 @@ export function useFollowUps(clinicId: string | null) {
   }, [clinicId])
 
   useEffect(() => {
+    if (demo && isDemoClinic(clinicId)) {
+      setFollowUps(demoFollowUps(demo.rows))
+      setLoading(false)
+      return
+    }
     setLoading(true)
     fetchFollowUps()
 
@@ -259,12 +329,13 @@ export function useFollowUps(clinicId: string | null) {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [clinicId, fetchFollowUps])
+  }, [clinicId, fetchFollowUps, demo])
 
-  return { followUps, loading, refetch: fetchFollowUps }
+  return { followUps, loading, refetch: makeDemoSafeRefetch(fetchFollowUps, demo, clinicId) }
 }
 
 export function useClinic(clinicId: string | null) {
+  const demo = useDemo()
   const [clinic, setClinic] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -283,14 +354,21 @@ export function useClinic(clinicId: string | null) {
   }, [clinicId])
 
   useEffect(() => {
+    if (demo && isDemoClinic(clinicId)) {
+      setClinic(demoClinic(demo.rows))
+      setLoading(false)
+      setError(null)
+      return
+    }
     setLoading(true)
     fetchClinic()
-  }, [clinicId, fetchClinic])
+  }, [clinicId, fetchClinic, demo])
 
-  return { clinic, loading, error, refetch: fetchClinic }
+  return { clinic, loading, error, refetch: makeDemoSafeRefetch(fetchClinic, demo, clinicId) }
 }
 
 export function useClinicConfig(clinicId: string | null) {
+  const demo = useDemo()
   const [config, setConfig] = useState<ClinicConfig | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -309,6 +387,12 @@ export function useClinicConfig(clinicId: string | null) {
   }, [clinicId])
 
   useEffect(() => {
+    if (demo && isDemoClinic(clinicId)) {
+      setConfig(demoConfig(demo.rows))
+      setLoading(false)
+      setError(null)
+      return
+    }
     setLoading(true)
     fetchConfig()
 
@@ -320,12 +404,13 @@ export function useClinicConfig(clinicId: string | null) {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [clinicId, fetchConfig])
+  }, [clinicId, fetchConfig, demo])
 
-  return { config, loading, error, refetch: fetchConfig }
+  return { config, loading, error, refetch: makeDemoSafeRefetch(fetchConfig, demo, clinicId) }
 }
 
 export function useStaffClinicId(userId: string | null) {
+  const demo = useDemo()
   const [result, setResult] = useState<{ clinicId: string | null; staff: Staff | null }>({
     clinicId: null,
     staff: null,
@@ -333,6 +418,18 @@ export function useStaffClinicId(userId: string | null) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (demo) {
+      if (!userId) {
+        setResult({ clinicId: null, staff: null })
+        setLoading(false)
+        return
+      }
+      const staff = demoStaffByAuthUser(demo.rows, userId)
+      setResult(staff ? { clinicId: staff.clinic_id, staff: staff } : { clinicId: null, staff: null })
+      setLoading(false)
+      return
+    }
+
     if (!userId) {
       setLoading(false)
       return
@@ -355,12 +452,13 @@ export function useStaffClinicId(userId: string | null) {
     }
 
     fetchStaff()
-  }, [userId])
+  }, [userId, demo])
 
   return { clinicId: result.clinicId, staff: result.staff, loading }
 }
 
 export function useStaffList(clinicId: string | null) {
+  const demo = useDemo()
   const [staffList, setStaffList] = useState<Staff[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -380,6 +478,11 @@ export function useStaffList(clinicId: string | null) {
   }, [clinicId])
 
   useEffect(() => {
+    if (demo && isDemoClinic(clinicId)) {
+      setStaffList(demoStaffList(demo.rows))
+      setLoading(false)
+      return
+    }
     setLoading(true)
     fetchStaffList()
 
@@ -391,12 +494,13 @@ export function useStaffList(clinicId: string | null) {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [clinicId, fetchStaffList])
+  }, [clinicId, fetchStaffList, demo])
 
-  return { staffList, loading, refetch: fetchStaffList }
+  return { staffList, loading, refetch: makeDemoSafeRefetch(fetchStaffList, demo, clinicId) }
 }
 
 export function useMessagesByConversation(conversationIds: string[]) {
+  const demo = useDemo()
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -404,6 +508,19 @@ export function useMessagesByConversation(conversationIds: string[]) {
 
   useEffect(() => {
     if (!conversationIds.length) {
+      setLoading(false)
+      return
+    }
+    if (demo) {
+      const wanted = new Set(conversationIds)
+      const rows: Message[] = demo.rows.messages
+        .filter((m) => wanted.has(m.conversation_id))
+        .sort((a, b) => a.created_at.localeCompare(b.created_at))
+        .map((m) => {
+          const s = demo.rows.staff.find((st) => st.id === m.staff_id)
+          return { ...m, staff: s ? { id: s.id, name: s.name } : null }
+        })
+      setMessages(rows)
       setLoading(false)
       return
     }
@@ -424,7 +541,7 @@ export function useMessagesByConversation(conversationIds: string[]) {
     return () => {
       cancelled = true
     }
-  }, [key]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [key, demo]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return { messages, loading }
 }

@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 import { timeShort, timeAgoFull } from "@/lib/format"
 import { requestRefresh } from "@/lib/refresh"
 import { useAuth } from "@/hooks/useAuth"
+import { enterDemo } from "@/lib/demo/store"
 import { Button } from "@/components/ui/Button"
 import { Avatar } from "@/components/ui/Avatar"
 import { EmptyState } from "@/components/ui/EmptyState"
@@ -35,7 +36,7 @@ interface TopbarProps {
 export default function Topbar({ onOpenMobileNav }: TopbarProps) {
   const location = useLocation()
   const navigate = useNavigate()
-  const { signOut } = useAuth()
+  const { signOut, isDemo } = useAuth()
   const { clinic, staff, activities, unreadCount, range, setRange, openActivity } = useLayoutData()
   const [bellOpen, setBellOpen] = useState(false)
   const [rangeOpen, setRangeOpen] = useState(false)
@@ -82,6 +83,12 @@ export default function Topbar({ onOpenMobileNav }: TopbarProps) {
       </div>
 
       <div className="flex items-center gap-1.5">
+        {isDemo && (
+          <Button variant="outline" size="sm" onClick={() => enterDemo()} title="Reset all data to its initial state">
+            <RefreshCw size={13} />
+            <span className="hidden md:inline">Reset</span>
+          </Button>
+        )}
         {/* Date range */}
         <div className="relative hidden sm:block">
           <Button variant="outline" size="sm" onClick={() => setRangeOpen((v) => !v)} aria-haspopup="listbox">

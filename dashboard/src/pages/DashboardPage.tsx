@@ -9,9 +9,12 @@ import {
   ArrowRight,
   CheckCheck,
   Clock,
+  TrendingUp,
   type LucideIcon,
 } from "lucide-react"
 import { useLayoutData } from "@/components/layout/Layout"
+import { useAuth } from "@/hooks/useAuth"
+import { DEMO_ROI } from "@/lib/demo/seed"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card"
 import { Button } from "@/components/ui/Button"
 import { Badge } from "@/components/ui/Badge"
@@ -19,7 +22,7 @@ import { Avatar } from "@/components/ui/Avatar"
 import { EmptyState } from "@/components/ui/EmptyState"
 import { Skeleton, Spinner } from "@/components/ui/Skeleton"
 import { StatusBadge, TierBadge, AppointmentStatusBadge } from "@/components/ui/status-badges"
-import { timeAgo, isTodayStr } from "@/lib/format"
+import { ghs, timeAgo, isTodayStr } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
 interface StatCardDef {
@@ -34,6 +37,7 @@ interface StatCardDef {
 
 export default function DashboardPage() {
   const { stats, conversations, appointments, loading, openActivity, handledToday } = useLayoutData()
+  const { isDemo } = useAuth()
   const navigate = useNavigate()
 
   const statCards: StatCardDef[] = useMemo(
@@ -160,6 +164,28 @@ export default function DashboardPage() {
           </div>
         </div>
       </section>
+
+      {isDemo && (
+        <section className="rounded-card border border-warning-soft bg-warning-soft/40 p-4 shadow-card">
+          <div className="flex items-center gap-2">
+            <span className="flex size-7 items-center justify-center rounded-lg bg-warning-soft">
+              <TrendingUp size={15} className="text-warning" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="font-display text-xs font-bold tracking-tight">Impact this month</p>
+              <p className="truncate text-[10.5px] text-muted-2">
+                Illustrative numbers for {DEMO_ROI.enquiriesThisMonth} enquiries · {DEMO_ROI.afterHoursReplies} after-hours replies (last at {DEMO_ROI.lastAfterHoursReply})
+              </p>
+            </div>
+          </div>
+          <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <RoiStat label="Enquiries handled" value={`${DEMO_ROI.autoHandled}/${DEMO_ROI.enquiriesThisMonth}`} sub={`${DEMO_ROI.autoHandledPct}% automatically`} />
+            <RoiStat label="Booked by Franel" value={`${DEMO_ROI.aiBookedAppointments}`} sub="appointments" />
+            <RoiStat label="Revenue protected" value={ghs(DEMO_ROI.revenueProtectedGhs)} sub="kept for the clinic" />
+            <RoiStat label="Front-desk time saved" value={`${DEMO_ROI.frontDeskHoursSaved}h`} sub="this month" />
+          </div>
+        </section>
+      )}
 
       {/* Stat cards */}
       <section className="grid grid-cols-2 gap-3 xl:grid-cols-4">
@@ -444,6 +470,16 @@ function HeroStat({ value, label }: { value: string; label: string }) {
       <span className="font-display text-xs font-extrabold leading-none text-white">{value}</span>
       <span className="text-[9.5px] font-semibold leading-none text-white/55">{label}</span>
     </span>
+  )
+}
+
+function RoiStat({ label, value, sub }: { label: string; value: string; sub: string }) {
+  return (
+    <div className="rounded-control border border-warning/20 bg-card px-3.5 py-3">
+      <p className="font-display text-lg font-extrabold leading-tight tracking-tight">{value}</p>
+      <p className="mt-1 text-xs font-semibold">{label}</p>
+      <p className="text-[10.5px] text-muted-2">{sub}</p>
+    </div>
   )
 }
 

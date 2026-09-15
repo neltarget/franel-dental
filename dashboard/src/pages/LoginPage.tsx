@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button"
 import { Input, Field } from "@/components/ui/Input"
 import { Spinner } from "@/components/ui/Skeleton"
 import { Stethoscope, Eye, EyeOff, MessageCircle, CalendarCheck, Siren, Check } from "lucide-react"
+import { DEMO_EMAIL, DEMO_PASSWORD } from "@/lib/demo/seed"
 
 const FEATURES = [
   { icon: MessageCircle, text: "Franel answers and qualifies every WhatsApp enquiry" },
@@ -111,7 +112,7 @@ export function LoginPage() {
               </div>
             )}
 
-            <Field label="Email">
+            <Field label="Email" hint={`Enter "${DEMO_EMAIL}" to test`}>
               <Input
                 type="email"
                 value={email}
@@ -123,7 +124,7 @@ export function LoginPage() {
               />
             </Field>
 
-            <Field label="Password">
+            <Field label="Password" hint={`Enter "${DEMO_PASSWORD}" to test`}>
               <div className="relative">
                 <Input
                   type={showPassword ? "text" : "password"}
