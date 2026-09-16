@@ -131,10 +131,24 @@
 }
 
 /* Tables */
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  /* Native controls: keep them legible in dropdowns and dark mode */
+  select,
+  option {
+    font-size: 13px;
+    font-family: inherit;
+  }
+  select {
+    color: var(--color-foreground);
+  }
+  select option {
+    background: var(--color-surface);
+    color: var(--color-foreground);
+  }
 
 /* Animations */
 @keyframes fr-pop {

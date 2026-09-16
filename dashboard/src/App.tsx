@@ -4,6 +4,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute"
 import Layout from "@/components/layout/Layout"
 import { LoginPage } from "@/pages/LoginPage"
 import DashboardPage from "@/pages/DashboardPage"
+import InsightsPage from "@/pages/InsightsPage"
 import { ConversationsListPage } from "@/pages/ConversationsListPage"
 import { ConversationDetailPage } from "@/pages/ConversationDetailPage"
 import { EscalationsPage } from "@/pages/EscalationsPage"
@@ -27,6 +28,7 @@ export default function App() {
                   <Layout>
                     <Routes>
                       <Route path="/" element={<DashboardPage />} />
+                      <Route path="/insights" element={<InsightsPage />} />
                       <Route path="/conversations" element={<ConversationsListPage />} />
                       <Route path="/conversations/:id" element={<ConversationDetailPage />} />
                       <Route path="/escalations" element={<EscalationsPage />} />

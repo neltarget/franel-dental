@@ -192,3 +192,27 @@ export interface AiActivityEvent {
   conversationId: string
   at: string
 }
+
+// ---------------------------------------------------------------------------
+// Insights — owner AI analyst (thread persistence, see 0004_insights_chats.sql)
+// ---------------------------------------------------------------------------
+
+export type InsightsChatRole = 'user' | 'assistant'
+
+export interface InsightsChat {
+  id: string
+  clinic_id: string
+  staff_id: string
+  title: string
+  created_at: string
+  updated_at: string
+}
+
+export interface InsightsChatMessage {
+  id: string
+  chat_id: string
+  role: InsightsChatRole
+  content: string
+  metadata: Record<string, unknown>
+  created_at: string
+}

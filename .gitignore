@@ -1,4 +1,14 @@
 week1-deliverables.html
 week2-deliverables.html
 week3-deliverables.html
+week4-deliverables.html
+week5-deliverables.html
+week6-deliverables.html
+week6-deliverables-story.html
+week6-deck.html
+
 __pycache__/
+assets/
+
+# Supabase CLI state
+dashboard/supabase/.temp/

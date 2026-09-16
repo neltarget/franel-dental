@@ -135,7 +135,7 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-3 sm:shrink-0">
+          <div className="flex flex-wrap items-center gap-3 sm:shrink-0">
             <div className="flex items-center gap-3 rounded-xl bg-white/[0.08] px-3.5 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] ring-1 ring-inset ring-white/15 backdrop-blur-md">
               <div>
                 <p className="font-display text-lg font-extrabold leading-none text-white">{stats.bookingsToday}</p>

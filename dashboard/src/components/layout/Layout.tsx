@@ -29,6 +29,7 @@ import type {
 import Sidebar from "./Sidebar"
 import Topbar, { type DateRange } from "./Topbar"
 import AiActivityDrawer from "./AiActivityDrawer"
+import { InsightsBubble } from "@/components/insights/InsightsBubble"
 import { Spinner } from "@/components/ui/Skeleton"
 
 export interface LayoutData {
@@ -209,15 +210,16 @@ export default function Layout({ children }: { children?: ReactNode }) {
           </div>
         )}
 
-        <main className="relative flex-1 overflow-hidden">
+        <main className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
           <Topbar onOpenMobileNav={() => setMobileNavOpen(true)} />
-          <div className="h-full overflow-y-auto">
+          <div className="min-h-0 flex-1 overflow-y-auto">
             <div className="mx-auto max-w-[1440px] p-4 lg:p-6">
               {children ?? null}
             </div>
           </div>
+          <AiActivityDrawer open={activityOpen} onClose={() => setActivityOpen(false)} />
+          <InsightsBubble />
         </main>
-        <AiActivityDrawer open={activityOpen} onClose={() => setActivityOpen(false)} />
       </div>
     </LayoutContext.Provider>
   )

@@ -6,6 +6,7 @@ import {
   Users,
   Siren,
   Settings,
+  BarChart3,
   Sparkles,
   ChevronLeft,
   ChevronRight,
@@ -25,6 +26,7 @@ type NavItem = {
 
 const NAV_WORKSPACE: NavItem[] = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, tone: "text-primary", end: true },
+  { to: "/insights", label: "Insights", icon: BarChart3, tone: "text-info" },
   { to: "/conversations", label: "Messages", icon: MessageCircle, tone: "text-info" },
   { to: "/appointments", label: "Bookings", icon: CalendarDays, tone: "text-success" },
   { to: "/patients", label: "Patients", icon: Users, tone: "text-violet" },

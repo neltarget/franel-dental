@@ -21,6 +21,7 @@ Built by Group 18 — Frank Owusu Ansah & Nelson M.K. Ador
 | Platform | Supabase | PostgreSQL database, staff authentication, real-time updates |
 | Sync bridge | `franel-sync` daemon (Python, VPS) | Mirrors WhatsApp/chats/Calendar into Supabase; pushes dashboard bookings, cancels and staff replies back out |
 | Staff interface | React 19 + Vite + Tailwind CSS | Live dashboard (messages, bookings, patients, escalations, settings) |
+| Insights | Supabase Edge Function (`franel-insights`) | Read-only AI analyst for the clinic owner: answers questions about the patient pipeline from RLS-scoped clinic data; pluggable LLM (Gemini default) |
 
 - The agent's prompts are split across a stable identity file (`SOUL.md`) and clinic-aware
   operating rules (`SKILL.md`).
@@ -39,15 +40,20 @@ franel-dental/
 │   └── franel-sync.service  # systemd user unit template
 └── dashboard/               # Staff dashboard (React 19 + Vite + Tailwind 4)
     ├── src/
-    │   ├── pages/           # Login, Dashboard, Conversations, ConversationDetail,
+    │   ├── pages/           # Login, Dashboard, Insights, Conversations, ConversationDetail,
     │   │                 # Appointments, Escalations, Patients, PatientDetail, Settings
-    │   ├── components/    # layout (Layout context, Sidebar, Topbar, AiActivityDrawer) + ui primitives
-    │   ├── hooks/         # useAuth, useData (real-time channels), useDashboardStats
-    │   ├── lib/           # supabase client, types, actions (writes), activity feed, format, utils
+    │   ├── components/    # layout (Layout context, Sidebar, Topbar, AiActivityDrawer)
+    │   │                 # insights (InsightsBubble, InsightsChat, InsightsChatBody) + ui primitives
+    │   ├── hooks/         # useAuth, useData (real-time channels), useDashboardStats, useInsightsChat
+    │   ├── lib/           # supabase client, types, actions (writes), insights analytics,
+    │   │                 # insightsChat (function client + demo analyst), activity feed, format, utils
     │   ├── App.tsx        # Router + AuthProvider + protected routes
     │   └── main.tsx
     ├── supabase/
-    │   └── migrations/    # 0001_rls · 0002_bridge_seam · 0003_seed_harbourview
+    │   ├── functions/franel-insights/  # Edge Function: http · context (RLS reads) · llm (providers)
+    │   └── migrations/    # 0001_rls · 0002_bridge_seam · 0003_seed_harbourview · 0004_insights_chats
+    ├── tsconfig.functions.json         # isolated typecheck config for the Edge Function
+    ├── deno-shim.d.ts                  # Deno type shims for local `tsc`
     ├── vercel.json        # SPA deep-link rewrite for Vercel
     ├── vite.config.ts
     └── .env               # local Supabase credentials
@@ -83,7 +89,7 @@ yarn preview    # preview the production build
 
 ## Database
 
-Supabase (PostgreSQL), nine tables, all scoped by `clinic_id`:
+Supabase (PostgreSQL), eleven tables, all scoped by `clinic_id`:
 
 `clinics` · `staff` (linked via `auth_user_id`) · `patients` · `conversations`
 (status: new / qualified / booked / escalated / closed; lead level; intent; service interest) ·
@@ -91,9 +97,57 @@ Supabase (PostgreSQL), nine tables, all scoped by `clinic_id`:
 `appointments` (status + attendance; two-way — mirror of Google Calendar,
 and dashboard-created bookings are claimed by the sync daemon into Calendar events) ·
 `escalations` (tier 1–3) · `follow_ups` (non-booker / reminder / no-show-recovery) ·
-`clinic_config` (automation settings + templates).
+`clinic_config` (automation settings + templates) ·
+`insights_chats` + `insights_chat_messages` (owner-analyst threads, append-only, per-staff/per-clinic).
 
 The dashboard subscribes to `postgres_changes` on every table, so all screens update in real time.
+
+## Insights (owner AI analyst)
+
+A read-only analyst for the clinic owner, available in two places:
+
+- `/insights` page — KPIs (pipeline, first-reply time, no-show rate), source & service-demand
+  charts (CSS, no chart library), booking funnel, and an embedded analyst chat.
+- A floating bubble (bottom-left) on every other page opens the same chat in a modal
+  (centered by default, maximizable to full screen). Threads persist per staff member
+  (`insights_chats` / `insights_chat_messages`, RLS) with a "New chat" action.
+
+Live mode: the browser POSTs the question + the signed-in user's JWT to the
+`franel-insights` Edge Function. The function validates the JWT (GoTrue), rate-limits
+(30 questions/hour/user), builds a fixed, RLS-scoped clinic context (patients, conversations,
+appointments, escalations under the caller's own JWT — no service key, no PII phone numbers in
+the prompt) and makes a single LLM call. The LLM is strictly grounded: analysis only, it never
+claims to have sent or changed anything.
+
+Demo mode needs no account — the demo UI posts its in-memory clinic dataset to the function's
+guarded demo route (shared public gate key in the bundle + 10 questions/hour/IP rate limit) and
+falls back to a local offline analyst if the function is unreachable.
+
+### Configure & deploy
+
+1. Apply `dashboard/supabase/migrations/0004_insights_chats.sql` in the Supabase SQL editor.
+2. Set function secrets (never in the repo):
+
+   ```bash
+   supabase secrets set FRANEL_LLM_PROVIDER=gemini
+   supabase secrets set FRANEL_LLM_MODEL=gemini-2.5-flash
+   supabase secrets set FRANEL_LLM_API_KEY=<key>
+   # optional for openai-compatible providers:
+   # supabase secrets set FRANEL_LLM_BASE_URL=https://...
+   # demo route (no-account demo): enable + shared gate key
+   supabase secrets set FRANEL_DEMO_MODE=1
+   supabase secrets set FRANEL_DEMO_KEY=<random key; client defaults to the one in insightsChat.ts>
+   ```
+
+   `FRANEL_LLM_PROVIDER` is `gemini` (default), `openai`, or `openai-compatible`.
+3. Deploy:
+
+   ```bash
+   cd dashboard
+   supabase functions deploy franel-insights
+   ```
+
+   Typecheck locally without Deno: `yarn tsc -p tsconfig.functions.json`.
 
 ## Agent-side runbook summary
 

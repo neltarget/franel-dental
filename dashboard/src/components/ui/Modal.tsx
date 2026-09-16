@@ -8,11 +8,13 @@ export interface ModalProps {
   onClose: () => void
   title?: React.ReactNode
   description?: React.ReactNode
+  actions?: React.ReactNode
   children: React.ReactNode
   className?: string
+  maximized?: boolean
 }
 
-function Modal({ open, onClose, title, description, children, className }: ModalProps) {
+function Modal({ open, onClose, title, description, actions, children, className, maximized = false }: ModalProps) {
   React.useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => {
@@ -29,26 +31,32 @@ function Modal({ open, onClose, title, description, children, className }: Modal
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className={cn("fixed inset-0 z-50 flex items-center justify-center", maximized ? "p-0" : "p-4")}>
       <div className="absolute inset-0 bg-background/70 backdrop-blur-[2px] anim-fade" onClick={onClose} />
       <div
         className={cn(
-          "relative w-full max-w-md rounded-card border border-border bg-card shadow-pop anim-pop",
+          "relative w-full overflow-hidden bg-card shadow-pop anim-pop",
+          maximized
+            ? "h-full max-w-none border border-border"
+            : "max-w-md rounded-card border border-border",
           className
         )}
         role="dialog"
         aria-modal="true"
       >
-        <div className="flex items-start justify-between gap-3 px-4 pt-4">
-          <div>
+        <div className={cn("flex items-start justify-between gap-3", maximized ? "px-6 pt-5" : "px-4 pt-4")}>
+          <div className="min-w-0">
             {title && <h2 className="font-display text-sm font-bold tracking-tight">{title}</h2>}
             {description && <p className="mt-1 text-[11px] text-muted">{description}</p>}
           </div>
+          {actions != null && <div className="flex shrink-0 items-center gap-1">{actions}</div>}
           <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label="Close dialog">
             <X size={15} />
           </Button>
         </div>
-        <div className="px-4 pb-4 pt-3">{children}</div>
+        <div className={cn("min-h-0", maximized ? "flex flex-1 flex-col px-6 pb-5 pt-3" : "px-4 pb-4 pt-3")}>
+          {children}
+        </div>
       </div>
     </div>
   )
