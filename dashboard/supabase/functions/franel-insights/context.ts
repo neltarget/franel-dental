@@ -43,13 +43,16 @@ const CONVERSATION_CAP = 120
 async function get(token: string, path: string, params: Record<string, string>): Promise<unknown[]> {
   const base = URL()
   if (!base) throw new Error("SUPABASE_URL is not configured")
+  // Kong key-auth on /rest/v1 accepts only project API keys — the user JWT
+  // goes in Authorization (where GoTrue/RLS reads it), not in apikey.
+  const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? ""
   const qs = new URLSearchParams()
   for (const [k, v] of Object.entries(params)) qs.set(k, v)
   const url = `${base}/rest/v1/${path}?${qs.toString()}`
   const res = await fetch(url, {
     headers: {
       "Authorization": `Bearer ${token}`,
-      "apikey": token,
+      "apikey": anonKey,
       "Content-Type": "application/json",
       "Prefer": "count=exact",
     },
