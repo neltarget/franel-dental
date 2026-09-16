@@ -220,7 +220,7 @@ export default function DashboardPage() {
 
       {/* Needs attention + upcoming bookings */}
       <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1.6fr_1fr]">
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <div>
               <CardTitle>Needs attention</CardTitle>
@@ -301,7 +301,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="min-w-0">
           <CardHeader>
             <div>
               <div className="flex items-center gap-2">
@@ -493,8 +493,8 @@ function DashboardSkeleton() {
         ))}
       </div>
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.6fr_1fr]">
-        <Skeleton className="h-56" />
-        <Skeleton className="h-56" />
+        <Skeleton className="h-56 min-w-0" />
+        <Skeleton className="h-56 min-w-0" />
       </div>
       <Skeleton className="h-64" />
       <div className="flex justify-center py-2 text-muted-2">

@@ -41,7 +41,7 @@ export function LogoLockup({
   hideWordmark?: boolean
 }) {
   return (
-    <span className={cn("flex min-w-0 items-center gap-2.5", className)}>
+    <span className={cn("flex min-w-0 items-center gap-1.5", className)}>
       <LogoMark
         size={size}
         className={onDark ? "text-white" : "text-primary"}
