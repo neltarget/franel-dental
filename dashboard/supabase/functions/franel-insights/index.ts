@@ -85,7 +85,8 @@ Deno.serve(async (req: Request) => {
     const token = bearerToken(req)
     if (!token) return text401("Missing Authorization: Bearer <user JWT>", corsHeaders)
     const authUser = await validateUser(token)
-    if (!authUser) return text401("Invalid or expired session", corsHeaders)
+    if (!authUser) return text401("Invalid or expired session — sign in again.", corsHeaders)
+    console.log(`[franel-insights] 200 user=${(authUser.id ?? "").slice(0, 8)} email=${authUser.email ?? "(none)"}`)
 
     // --- Rate limit (per user).
     const rl = rateLimit(authUser.id, RATE_LIMIT_PER_HOUR)
@@ -141,15 +142,23 @@ function normalizeHistory(raw: unknown): HistoryMessage[] {
 async function validateUser(jwt: string): Promise<{ id: string; email: string | null } | null> {
   const url = Deno.env.get("SUPABASE_URL")
   if (!url) return null
+  // GoTrue's route sits behind Kong key-auth, which accepts the PROJECT's api
+  // keys — not arbitrary JWTs. So: apikey = the anon key (injected runtime
+  // env), Authorization = the caller's user JWT (what GoTrue actually checks).
+  const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? ""
   try {
     const res = await fetch(`${url}/auth/v1/user`, {
       headers: {
         "Authorization": `Bearer ${jwt}`,
-        "apikey": jwt,
+        "apikey": anonKey,
         "Content-Type": "application/json",
       },
     })
-    if (!res.ok) return null
+    if (!res.ok) {
+      const detail = (await res.text().catch(() => "")).slice(0, 160)
+      console.warn(`[franel-insights] validateUser hop failed: ${res.status} ${detail}`)
+      return null
+    }
     const data = (await res.json()) as { id?: string; email?: string | null }
     if (!data || !data.id) return null
     return { id: data.id, email: data.email ?? null }

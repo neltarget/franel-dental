@@ -31,6 +31,7 @@ export function jsonErr(
 }
 
 export function text401(message: string, headers: Record<string, string>): Response {
+  console.warn(`[franel-insights] 401 ${new Date().toISOString()}\n${message}`)
   return new Response(message, {
     status: 401,
     headers: { "Content-Type": "text/plain", ...headers },

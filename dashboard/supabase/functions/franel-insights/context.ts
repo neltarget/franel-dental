@@ -292,7 +292,9 @@ function aggregate(
     return s === "attended" || s === "no-show"
   })
   const noShowCount = apptRowsAll.filter((a) => stateOf(a) === "no-show").length
-  const noShowPct = apptDone.length ? Math.round((noShowCount / apptDone.length) * 1000) / 10 : null
+  const noShow = apptDone.length
+    ? { count: noShowCount, pct: Math.round((noShowCount / apptDone.length) * 1000) / 10 }
+    : null
 
   return {
     clinic,
@@ -307,7 +309,7 @@ function aggregate(
     services: serviceList,
     topSources: topEntries(bySource, 6),
     topIntents: topEntries(intentCount, 6).map((t) => ({ intent: t.source, count: t.count })),
-    noShow: apptDone.length ? { count: noShowCount, pct: noShowPct } : null,
+    noShow,
     upcoming,
     attention,
     queries: [...queries, `escalations (open: ${escalOpen})`, "appointments (no-show trend)"],

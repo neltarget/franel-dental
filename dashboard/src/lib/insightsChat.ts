@@ -45,15 +45,22 @@ export async function askInsights(args: { question: string; history: ChatHistory
     },
     body: JSON.stringify({ question: args.question, history: args.history.slice(-8) }),
   })
-  const data = (await res.json().catch(() => ({}))) as {
+  const raw = await res.text()
+  let data: {
     error?: string
     answer?: string
     model?: string
     provider?: string
     queries?: string[]
+  } = {}
+  try {
+    data = (JSON.parse(raw) as typeof data) ?? data
+  } catch {
+    // plain-text body (e.g. the function's 401) — surfaced as-is below
   }
   if (!res.ok || data.error) {
-    throw new Error(data.error ?? `Analyst request failed (${res.status}).`)
+    // Surface the function's exact reason (its 401s are plain text).
+    throw new Error(data.error ?? (raw ? raw.slice(0, 200) : `Analyst request failed (${res.status}).`))
   }
   return {
     answer: data.answer ?? "",
