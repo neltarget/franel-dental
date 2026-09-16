@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useLocation } from "react-router-dom"
-import { Sparkles } from "lucide-react"
+import { LogoMark } from "@/components/brand/Logo"
 import { InsightsChat } from "./InsightsChat"
 
 export function InsightsBubble() {
@@ -21,7 +21,7 @@ export function InsightsBubble() {
         title="Franel Analyst · AI"
         className="group fixed bottom-8 right-5 z-[60] flex size-12 items-center justify-center rounded-full bg-navy text-white shadow-pop transition-all hover:bg-navy-2 hover:scale-105 active:scale-95"
       >
-        <Sparkles size={19} strokeWidth={2.2} />
+        <LogoMark size={22} sparkClassName="fill-primary-soft" />
         <span className="pointer-events-none absolute right-14 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-navy px-2.5 py-1.5 text-[11px] font-semibold text-white opacity-0 shadow-pop transition-opacity group-hover:opacity-100">
           Ask Franel Analyst
         </span>

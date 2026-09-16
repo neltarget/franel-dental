@@ -4,7 +4,8 @@ import { useAuth } from "@/hooks/useAuth"
 import { Button } from "@/components/ui/Button"
 import { Input, Field } from "@/components/ui/Input"
 import { Spinner } from "@/components/ui/Skeleton"
-import { Stethoscope, Eye, EyeOff, MessageCircle, CalendarCheck, Siren, Check } from "lucide-react"
+import { LogoLockup } from "@/components/brand/Logo"
+import { Eye, EyeOff, MessageCircle, CalendarCheck, Siren, Check } from "lucide-react"
 import { DEMO_EMAIL, DEMO_PASSWORD } from "@/lib/demo/seed"
 
 const FEATURES = [
@@ -45,16 +46,9 @@ export function LoginPage() {
         <div className="pointer-events-none absolute -bottom-32 -left-24 size-96 rounded-full bg-accent/15 blur-3xl" />
 
         <div className="relative flex items-center gap-2.5">
-          <span className="flex size-9 items-center justify-center rounded-xl bg-primary">
-            <Stethoscope size={18} className="text-white" />
-          </span>
-          <span className="flex flex-col leading-none">
-            <span className="font-display text-lg font-extrabold tracking-tight">
-              Franel <span className="font-bold text-white/50">Dental</span>
-            </span>
-            <span className="mt-1 flex items-center gap-1.5 text-[10px] font-semibold text-white/60">
-              <span className="pulse-dot size-1.5 rounded-full bg-emerald-400" /> AI · Live
-            </span>
+          <LogoLockup onDark size={34} />
+          <span className="mt-1 flex items-center gap-1.5 text-[10px] font-semibold text-white/60">
+            <span className="pulse-dot size-1.5 rounded-full bg-emerald-400" /> AI · Live
           </span>
         </div>
 
@@ -91,12 +85,7 @@ export function LoginPage() {
       <div className="flex flex-1 items-center justify-center bg-background p-6">
         <div className="w-full max-w-sm">
           <div className="mb-8 flex items-center gap-2.5 lg:hidden">
-            <span className="flex size-9 items-center justify-center rounded-xl bg-primary">
-              <Stethoscope size={18} className="text-white" />
-            </span>
-            <span className="font-display text-lg font-extrabold tracking-tight">
-              Franel <span className="font-bold text-muted-2">Dental</span>
-            </span>
+            <LogoLockup size={30} />
           </div>
 
           <h2 className="font-display text-xl font-extrabold tracking-tight">Sign in to your clinic</h2>

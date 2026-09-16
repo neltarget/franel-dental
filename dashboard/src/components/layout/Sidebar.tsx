@@ -7,11 +7,11 @@ import {
   Siren,
   Settings,
   BarChart3,
-  Sparkles,
   ChevronLeft,
   ChevronRight,
   type LucideIcon,
 } from "lucide-react"
+import { LogoMark, LogoLockup } from "@/components/brand/Logo"
 import { cn } from "@/lib/utils"
 import { initials } from "@/lib/format"
 import type { Clinic, Staff } from "@/lib/types"
@@ -87,22 +87,7 @@ export default function Sidebar({
         <>
           {/* Header */}
           <div className="flex items-center gap-1.5 px-2.5 pb-3 pt-4">
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary">
-              <Sparkles size={15} strokeWidth={2.2} />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="flex items-center gap-1.5">
-                <span className="font-display text-[15px] font-extrabold tracking-tight">
-                  Franel{" "}
-                  <span className="text-[13px] font-bold text-muted-2">Dental</span>
-                </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-primary-soft px-1.5 py-px text-[9px] font-bold text-primary">
-                  <span className="size-1 rounded-full bg-primary pulse-dot" />
-                  AI · Live
-                </span>
-              </span>
-              <span className="block text-[10px] font-medium text-muted">WhatsApp console</span>
-            </span>
+            <LogoLockup size={30} className="flex-1" />
             {onToggle && (
               <button
                 onClick={onToggle}
@@ -279,10 +264,10 @@ function Rail({
         </button>
       )}
       <span
-        className="mb-3 flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary"
+        className="mb-3 flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary"
         title="Franel · AI live"
       >
-        <Sparkles size={15} strokeWidth={2.2} />
+        <LogoMark size={20} sparkClassName="fill-primary" />
       </span>
       <nav className="flex flex-1 flex-col items-center gap-1 overflow-y-auto">
         {NAV_WORKSPACE.map((item) => (
