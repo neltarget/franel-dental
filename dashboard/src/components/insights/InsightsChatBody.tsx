@@ -51,7 +51,7 @@ export function InsightsChatBody({ className, showMaximize = false, maximized = 
   return (
     <div className={cn("flex flex-col", className)}>
       {/* Toolbar */}
-      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border pb-2.5">
+      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-4 pb-2.5">
         <span className="truncate text-[11px] font-mid text-muted">
           {activeChat ? `Thread · ${activeChat.title}` : "New analysis"}
         </span>
@@ -84,7 +84,7 @@ export function InsightsChatBody({ className, showMaximize = false, maximized = 
 
       {/* Thread history */}
       {showHistory && (
-        <div className="shrink-0 border-b border-border py-2">
+        <div className="shrink-0 border-b border-border px-4 py-2">
           <p className="px-1 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-2">Past chats</p>
           <div className="mt-1.5 max-h-32 space-y-0.5 overflow-y-auto px-1">
             {threads.length === 0 && <p className="px-1 py-1.5 text-[11px] text-muted">No past chats yet.</p>}
@@ -109,7 +109,7 @@ export function InsightsChatBody({ className, showMaximize = false, maximized = 
       )}
 
       {/* Messages */}
-      <div ref={scrollRef} className={cn("flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto py-3", maximized && "px-2")}>
+      <div ref={scrollRef} className="flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto px-4 py-3">
         {loading ? (
           <div className="flex items-center gap-2 px-1 py-4 text-[11.5px] text-muted">
             <Spinner className="size-3.5" /> Loading…
@@ -160,16 +160,16 @@ export function InsightsChatBody({ className, showMaximize = false, maximized = 
       </div>
 
       {/* Composer */}
-      <div className="flex shrink-0 items-end gap-2 border-t border-border pt-3">
+      <div className="flex shrink-0 items-end gap-2 border-t border-border px-4 pt-3">
         <textarea
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-              e.preventDefault()
-              submit()
-            }
-          }}
+onKeyDown={(e) => {
+             if (e.key === "Enter" && !e.shiftKey) {
+               e.preventDefault()
+               submit()
+             }
+           }}
           rows={1}
           placeholder="Ask about bookings, pricing pressure, no-shows…"
           aria-label="Ask Franel Analyst"
@@ -179,7 +179,7 @@ export function InsightsChatBody({ className, showMaximize = false, maximized = 
           <SendHorizontal size={15} />
         </Button>
       </div>
-      <p className="shrink-0 pt-2 text-center text-[10px] text-muted-2">Franel Analyst · read-only · ⌘/Ctrl + Enter to send</p>
+      <p className="shrink-0 px-4 pt-2 text-center text-[10px] text-muted-2">Franel Analyst · read-only · Enter to send · Shift + Enter for a new line</p>
     </div>
   )
 }

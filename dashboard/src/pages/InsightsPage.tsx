@@ -78,24 +78,24 @@ export default function InsightsPage() {
             {/* Source + service demand */}
             <div className="grid gap-4 md:grid-cols-2">
               <Card>
-                <CardHeader className="p-4 pb-1">
+                <CardHeader>
                   <div>
                     <CardTitle>Where patients come from</CardTitle>
                     <CardDescription>Acquisition sources across all patients</CardDescription>
                   </div>
                 </CardHeader>
-                <CardContent className="px-4 pb-4">
+                <CardContent>
                   <BarList items={ins.sourceMix} caption={ins.sourceMix.length ? "" : "No source labels yet — add sources to know what to double down on."} />
                 </CardContent>
               </Card>
               <Card>
-                <CardHeader className="p-4 pb-1">
+                <CardHeader>
                   <div>
                     <CardTitle>What they ask for</CardTitle>
                     <CardDescription>Top service interest in conversations</CardDescription>
                   </div>
                 </CardHeader>
-                <CardContent className="px-4 pb-4">
+                <CardContent>
                   <BarList items={ins.serviceDemand} caption={ins.serviceDemand.length ? "" : "No service interest captured yet."} />
                 </CardContent>
               </Card>
@@ -103,13 +103,13 @@ export default function InsightsPage() {
 
             {/* Funnel */}
             <Card>
-              <CardHeader className="p-4 pb-1">
+              <CardHeader>
                 <div>
                   <CardTitle>Booking funnel</CardTitle>
                   <CardDescription>Enquiry → qualified → booked → attended</CardDescription>
                 </div>
               </CardHeader>
-              <CardContent className="px-4 pb-4">
+              <CardContent>
                 <Funnel
                   steps={[
                     { label: "Enquiries", count: ins.funnel.enquiries },
@@ -130,7 +130,7 @@ export default function InsightsPage() {
 
           {/* Analyst chat */}
           <div className="min-w-0">
-            <Card className="flex h-[600px] flex-col xl:sticky xl:top-4 xl:h-[calc(100vh-140px)]">
+            <Card className="flex h-[600px] flex-col xl:sticky xl:top-6 xl:h-[calc(100vh-140px)]">
               <InsightsChatBody className="flex-1 min-h-0" />
             </Card>
           </div>
