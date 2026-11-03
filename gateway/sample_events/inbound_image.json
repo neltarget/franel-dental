@@ -1,0 +1,29 @@
+{
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "103559946885622",
+      "changes": [
+        {
+          "field": "messages",
+          "value": {
+            "messaging_product": "whatsapp",
+            "phone_number_id": "103559946885622",
+            "contacts": [
+              { "wa_id": "2332440000002" }
+            ],
+            "messages": [
+              {
+                "from": "2332440000002",
+                "id": "wamid.HBgLNDMzMTkxNTkzNTc3EgQBBBBAB",
+                "timestamp": "1762253000",
+                "type": "image",
+                "image": { "id": "20856005016000002", "caption": "my X-ray" }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

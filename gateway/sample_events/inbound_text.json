@@ -1,0 +1,29 @@
+{
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "103559946885622",
+      "changes": [
+        {
+          "field": "messages",
+          "value": {
+            "messaging_product": "whatsapp",
+            "phone_number_id": "103559946885622",
+            "contacts": [
+              { "profile": { "name": "Kwame Mensah" }, "wa_id": "2332440000000" }
+            ],
+            "messages": [
+              {
+                "from": "2332440000000",
+                "id": "wamid.HBgLNDMzMTkxNTkzNTc1EgQQRRgAAAA",
+                "timestamp": "1762252800",
+                "type": "text",
+                "text": { "body": "Hi, I need a teeth whitening consultation please" }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

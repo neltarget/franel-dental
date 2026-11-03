@@ -1,0 +1,25 @@
+{
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "103559946885622",
+      "changes": [
+        {
+          "field": "template_status_update",
+          "value": {
+            "messaging_product": "whatsapp",
+            "phone_number_id": "103559946885622",
+            "template_status_update": [
+              {
+                "name": "franel_reminder",
+                "language": "en",
+                "status": "APPROVED",
+                "timestamp": "1762253100"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

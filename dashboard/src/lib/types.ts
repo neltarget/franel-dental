@@ -11,6 +11,18 @@ export interface Clinic {
   policies: Record<string, unknown>
   created_at: string
   updated_at: string
+  // platform (0005_platform.sql)
+  plan_id: string | null
+  renews_at: string | null
+  wa_phone_number_id: string | null
+  wa_number: string | null
+  wa_status: 'pending' | 'linking' | 'active' | 'error'
+  wa_display_name: string | null
+  wa_templates_status: Record<string, string>
+  calendar_id: string | null
+  status: 'trial' | 'active' | 'suspended'
+  onboarded_at: string | null
+  settings_version: number
 }
 
 export interface ClinicService {
@@ -143,6 +155,58 @@ export interface ClinicConfig {
   whatsapp_templates: Record<string, string>
   created_at: string
   updated_at: string
+  ops_heartbeat_at: string | null
+}
+
+// ---------------------------------------------------------------------------
+// Platform (0005_platform.sql) — console accounts, plans, metering, audit
+// ---------------------------------------------------------------------------
+
+export interface PlatformUser {
+  id: string
+  auth_user_id: string | null
+  name: string
+  email: string
+  role: 'platform_admin' | 'platform_support'
+  is_active: boolean
+  created_at: string
+}
+
+export interface Plan {
+  id: string
+  code: string
+  name: string
+  price_gbp: number
+  currency: string
+  billing_cycle: 'monthly' | 'annual'
+  features: Record<string, unknown>
+  is_active: boolean
+  sort_order: number
+  created_at: string
+}
+
+export const USAGE_EVENT_TYPES = ['incoming_message', 'outbound_message', 'appointment_created', 'voice_minutes'] as const
+export type UsageEventType = (typeof USAGE_EVENT_TYPES)[number]
+
+export interface UsageEvent {
+  id: number
+  clinic_id: string
+  event_type: UsageEventType
+  amount: number
+  ref_type: string | null
+  ref_id: string | null
+  created_at: string
+}
+
+export interface AuditLogEntry {
+  id: number
+  clinic_id: string
+  actor_email: string
+  action: string
+  target_type: string | null
+  target_id: string | null
+  detail: Record<string, unknown>
+  created_at: string
 }
 
 export interface DashboardStats {

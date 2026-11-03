@@ -1,6 +1,9 @@
+import { lazy, Suspense } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { AuthProvider } from "@/hooks/useAuth"
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute"
+import { PlatformProtectedRoute } from "@/components/auth/PlatformProtectedRoute"
+import { Spinner } from "@/components/ui/Skeleton"
 import Layout from "@/components/layout/Layout"
 import { LoginPage } from "@/pages/LoginPage"
 import DashboardPage from "@/pages/DashboardPage"
@@ -14,6 +17,16 @@ import { PatientsPage } from "@/pages/PatientsPage"
 import { PatientDetailPage } from "@/pages/PatientDetailPage"
 import { ToastProvider } from "@/components/ui/Toast"
 
+const ConsoleRoot = lazy(() => import("@/console/ConsoleRoot"))
+
+function ConsoleFallback() {
+  return (
+    <div className="flex h-screen items-center justify-center bg-background">
+      <Spinner className="size-6" />
+    </div>
+  )
+}
+
 export default function App() {
   return (
     <ToastProvider>
@@ -21,6 +34,16 @@ export default function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/console/*"
+              element={
+                <PlatformProtectedRoute>
+                  <Suspense fallback={<ConsoleFallback />}>
+                    <ConsoleRoot />
+                  </Suspense>
+                </PlatformProtectedRoute>
+              }
+            />
             <Route
               path="/*"
               element={

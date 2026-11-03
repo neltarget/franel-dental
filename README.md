@@ -5,6 +5,13 @@ WhatsApp number: it answers enquiries, qualifies leads, checks real calendar ava
 appointments, sends reminders and follow-ups, and escalates to human staff when needed. Clinic
 teams get a real-time dashboard to watch and steer everything.
 
+Franel is being built as a **multi-clinic SaaS**: each clinic plugs in its own WhatsApp number,
+its own dashboard tenant, and its own agent runner, while a developer console lets the platform
+operators create and manage clinic accounts end-to-end (no per-clinic code). Supabase is the
+single source of truth for all clinic information; see `docs/franel-platform-plan.md` (plan) and
+`docs/hermes-runner-contract.md` (Hermes-side contract) for the full target architecture.
+Today's live setup below is the single-clinic POC that the platform plan migrates.
+
 Built by Group 18 — Frank Owusu Ansah & Nelson M.K. Ador
 (Codetrain AI Talent Accelerator 2026, Healthcare & Health Access challenge).
 
@@ -12,6 +19,8 @@ Built by Group 18 — Frank Owusu Ansah & Nelson M.K. Ador
 - **Repository:** https://github.com/neltarget/franel-dental
 
 ## Architecture
+
+**Current (live POC, single clinic):**
 
 | Layer | Technology | Role |
 | --- | --- | --- |
@@ -29,13 +38,28 @@ Built by Group 18 — Frank Owusu Ansah & Nelson M.K. Ador
 - Hermes cron jobs (reminders, non-booker follow-ups, post-visit check-ins, no-show recovery)
   re-check patient state before sending anything.
 
+**Target (multi-clinic platform — in development, see `docs/franel-platform-plan.md`):**
+
+| Layer | Technology | Role |
+| --- | --- | --- |
+| Patient channel | WhatsApp **Cloud API** via the Franel-owned business app (one app, one number per clinic) | Official, durable channel; no phone sessions, no QR pairing |
+| Channel service | `gateway/` (Python, VPS) | Webhook receiver (signature-verified) + the only Meta-token holder + outbound send API (free-form 24 h window / utility templates) + number/template onboarding pipeline |
+| AI agent | Hermes Agent, **one runner per clinic** | Reads clinic facts live from Supabase (cached + write-invalidated); writes bookings/no-shows directly; all sends via the gateway |
+| Sync | `franel-ops` (successor to `franel-sync`, Python, VPS) | Multi-clinic loop: Calendar two-way mirror, dashboard-booking claims, staff-reply drain |
+| Platform | Supabase (source of truth) | + `platform_users`, `plans`, `usage_events`, `audit_log`, per-clinic WhatsApp onboarding state |
+| Operator interface | `/console` in the same dashboard deploy (lazy-loaded, RLS-gated) | Create/edit/suspend clinics, WhatsApp onboarding, health, audited conversation peek, usage |
+
 ## Repository layout
 
 ```
 franel-dental/
 ├── README.md                # This file
+├── docs/
+│   ├── franel-platform-plan.md    # Multi-clinic SaaS: target architecture, phases, kill list
+│   └── hermes-runner-contract.md  # Per-clinic Hermes runner contract (Hermes-side build)
+├── gateway/                 # (planned, Phase 0) WhatsApp Cloud API gateway: webhook, sends, onboarding
 ├── sync/                    # VPS sync daemon (Python, stdlib only)
-│   ├── franel_sync.py       # the daemon
+│   ├── franel_sync.py       # the daemon (becomes `franel-ops` multi-clinic worker, Phase 3)
 │   ├── franel-deploy.sh     # VPS installer (env file + systemd user unit)
 │   └── franel-sync.service  # systemd user unit template
 └── dashboard/               # Staff dashboard (React 19 + Vite + Tailwind 4)

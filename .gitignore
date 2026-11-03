@@ -9,6 +9,7 @@ week6-deck.html
 
 __pycache__/
 assets/
+*.log
 
 # Supabase CLI state
 dashboard/supabase/.temp/

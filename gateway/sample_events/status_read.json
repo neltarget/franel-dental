@@ -1,0 +1,26 @@
+{
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "103559946885622",
+      "changes": [
+        {
+          "field": "messages",
+          "value": {
+            "messaging_product": "whatsapp",
+            "phone_number_id": "103559946885622",
+            "statuses": [
+              {
+                "id": "wamid.HBgMQQ111111111111",
+                "timestamp": "1762252810",
+                "type": "message",
+                "status": "read",
+                "to": "2332440000000"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

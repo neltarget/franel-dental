@@ -1,0 +1,29 @@
+{
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "103559946885622",
+      "changes": [
+        {
+          "field": "messages",
+          "value": {
+            "messaging_product": "whatsapp",
+            "phone_number_id": "103559946885622",
+            "contacts": [
+              { "wa_id": "2332440000001" }
+            ],
+            "messages": [
+              {
+                "from": "2332440000001",
+                "id": "wamid.HBgLNDMzMTkxNTkzNTc2EgQBBBBAA",
+                "timestamp": "1762252900",
+                "type": "audio",
+                "audio": { "id": "20856005016000001" }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
