@@ -7,7 +7,7 @@ Updated as work lands; **Status** column is the single source of progress truth.
 | # | Work package | Status | Runs on | Unblocks |
 |---|---|---|---|---|
 | 1 | `0005_platform.sql` + `types.ts` | **DONE 2026-11-03** (applied to `qsqlipuyosgdzyphcfts`) — verify RLS in a browser with a platform account once package #5 lands | Supabase (remote) | everything below |
-| 2 | Phase 0 — Meta bring-up (external) | **OPEN — needs Target**: Business app + WhatsApp product, link `+233503585763` (one-way: log that number out of the classic WA app on the phone first), System User token, webhook at `https://<vps-domain>/whatsapp`, Caddy on the VPS, `~/.config/franel-gateway.env`, 3–5 tester phones | Meta dashboard + VPS | gateway |
+| 2 | Phase 0 — Meta bring-up (external) | **OPEN — needs Target**: Business app + WhatsApp product, link the clinic's WhatsApp number (one-way: log that number out of the classic WA app on the phone first), System User token, webhook at `https://<vps-domain>/whatsapp`, Caddy on the VPS, `~/.config/franel-gateway.env`, 3–5 tester phones | Meta dashboard + VPS | gateway |
 | 3 | `gateway/` (webhook, `/send`, `/send-template`, `/onboard`, `/health`, outbox, `franel-gateway.service`, `scripts/wa_replay.py`) | **DONE 2026-11-03** — compiles clean; 5-sample-event offline replay green (text/audio/image/status-read/template-status); live dry-run HTTP smoke: `/health`, webhook GET verify (200+challenge / 403 wrong token), signed POST (200 / 401 bad sig), `/send` Bearer (200 / 401); outbox enqueue+drain verified | VPS (`franel-gateway` systemd user unit, port 3001) | ops worker; clinic cutover |
 | 4 | Supabase Edge Function `create-clinic` (service key: clinic + config + owner auth user + staff row + Google Calendar, then pings gateway `/onboard`) | PENDING | Supabase Edge Functions | console wizard |
 | 5 | Console: migration-gated scaffolding (lazy `/console` routes, `ConsoleLayout`, `WaStatusBadge`, Overview read-only tiles from live data) | **DONE 2026-11-03** — lazy chunk verified in build output (`ConsoleRoot/Overview/ClinicsPage/AuditPage` separate from clinic `index`); `usePlatformSession` + `PlatformProtectedRoute` (RLS-gated `platform_users` lookup); Overview KPIs + per-clinic tiles + alert band (stale heartbeat >120 s, WA error, dead letters); Clinics table; Audit log w/ filters. **Manual step when first operator signs in**: create the 2 platform accounts (Supabase Auth users + `platform_users` rows) — no SQL for it on purpose (passwords) | dashboard (Vercel, same deploy) | control station |
@@ -31,7 +31,7 @@ Order dependency (critical path): **1 → 2 ∥ 4 → 3 → 9 → {6 ∥ 7 → 8
 | Dashboard + console | Vercel | anonymous key + user JWTs (RLS) | Vercel env (anon key only) |
 | `create-clinic` Edge Function | Supabase | service key | Supabase function secrets |
 | `franel-gateway` | VPS, systemd **user** unit | user `adorneltarget` | `~/.config/franel-gateway.env` (600): `WA_APP_TOKEN`, `WA_APP_SECRET`, `WA_VERIFY_TOKEN`, `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `PORT`, + optional voice-note STT vars |
-| `franel-ops` (was `franel-sync`) | VPS, systemd user unit | `adorneltarget` | `~/.config/franel-sync.env` (add `GATEWAY_URL=http://localhost:3001`; `BRIDGE_URL` dies at cutover) |
+| `franel-ops` (was `franel-sync`) | VPS, systemd user unit | `adorneltarget` | `~/.config/franel-sync.env` (add `GATEWAY_URL=http://localhost:3001` when the gateway lands) |
 | Hermes agent runners | VPS, one systemd user unit per clinic | `adorneltarget` | `~/.hermes/clinics/<uuid>/clinic.env` + `~/.config/franel-shared.env` |
 | Google Calendar | GCP | one Franel service account, N calendars (`--calendar-id` per clinic) | GCP (unchanged) |
 
@@ -50,7 +50,9 @@ Order dependency (critical path): **1 → 2 ∥ 4 → 3 → 9 → {6 ∥ 7 → 8
 
 ## Current state (unchanged by WP-1)
 
-- Live: single-clinic POC on Baileys + `franel-sync` + per-Hermes config.
+- Live: single-clinic POC — `franel-sync` (WhatsApp/Baileys path removed 2026-11-09:
+  no inbound WA mirror, no bridge sends; calendar + no-show + dashboard-claim sync only)
+  + per-Hermes config.
 - DB now has platform columns/tables (all NULL/default on the existing HarbourView
   row: `status='active'`, `wa_status='pending'`, `settings_version=0`), RLS platform
   policies, and the `settings_version` bump triggers. Nothing reads the new columns

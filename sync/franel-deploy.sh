@@ -24,7 +24,6 @@ SUPABASE_URL=https://qsqlipuyosgdzyphcfts.supabase.co
 SUPABASE_SERVICE_KEY=__PASTE_SERVICE_ROLE_KEY__
 # Must match the fixed clinic UUID seeded by migration 0003.
 FRANEL_CLINIC_ID=a1b2c3d4-e5f6-7890-abcd-ef1234567890
-BRIDGE_URL=http://localhost:3000
 # Optional: force a specific python for google_api.py calls (auto-detected by default).
 # FRANEL_GAPI_PYTHON=/home/adorneltarget/.hermes/hermes-agent/venv/bin/python3
 EOF

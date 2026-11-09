@@ -24,11 +24,11 @@ Built by Group 18 — Frank Owusu Ansah & Nelson M.K. Ador
 
 | Layer | Technology | Role |
 | --- | --- | --- |
-| Patient channel | WhatsApp (Baileys bridge) | Patients message the clinic number; that thread is Franel |
+| Patient channel | WhatsApp (agent's own session, on the VPS) | Patients message the clinic number; that thread is Franel |
 | AI agent | Hermes Agent (LLM + tools + cron) | The patient-conversion front desk: conversation, booking, escalation |
 | Scheduling | Google Calendar API | Real availability checks + appointment events |
 | Platform | Supabase | PostgreSQL database, staff authentication, real-time updates |
-| Sync bridge | `franel-sync` daemon (Python, VPS) | Mirrors WhatsApp/chats/Calendar into Supabase; pushes dashboard bookings, cancels and staff replies back out |
+| Sync daemon | `franel-sync` (Python, VPS) | Mirrors Google Calendar + no-show flags into Supabase; pushes dashboard bookings and cancels out |
 | Staff interface | React 19 + Vite + Tailwind CSS | Live dashboard (messages, bookings, patients, escalations, settings) |
 | Insights | Supabase Edge Function (`franel-insights`) | Read-only AI analyst for the clinic owner: answers questions about the patient pipeline from RLS-scoped clinic data; pluggable LLM (Gemini default) |
 
@@ -176,9 +176,9 @@ falls back to a local offline analyst if the function is unreachable.
 ## Agent-side runbook summary
 
 - Always-on host runs the Hermes agent (LLM, prompts, cron scheduler).
-- Baileys bridge pairs the agent to the clinic's WhatsApp number; voice notes are transcribed
-  (STT) before the LLM processes them; images are received and acknowledged (not clinically
-  interpreted in the POC).
+- The agent operates the clinic's WhatsApp through its own session, which lives on the VPS
+  outside this repository; voice notes are transcribed (STT) before the LLM processes them;
+  images are received and acknowledged (not clinically interpreted in the POC).
 - Google Calendar is the source of truth for availability; a booking is only confirmed to the
   patient after the calendar tool succeeds.
 
@@ -187,18 +187,19 @@ falls back to a local offline analyst if the function is unreachable.
 `sync/franel_sync.py` runs on the always-on host and keeps the dashboard honest. Two directions,
 every cycle (DB every 5 s, Calendar every 60 s):
 
-- **Host → dashboard** — WhatsApp threads from `~/.hermes/state.db` (read-only) →
-  `patients` / `conversations` / `messages`; Google Calendar `DENTAL APPT …` events →
-  `appointments`; no-show flags from `~/.hermes/data/franel_reminders_state.json` →
+- **Host → dashboard** — Google Calendar `DENTAL APPT …` events → `patients` /
+  `conversations` / `appointments` (patient matched by email, then phone, created if new);
+  no-show flags from `~/.hermes/data/franel_reminders_state.json` →
   `appointments.attendance` / `status`.
 - **Dashboard → host** — dashboard bookings (no `google_event_id`) → Calendar event
-  `DENTAL APPT — <name> — <service>` + WhatsApp confirmation; cancellations (with a
-  `google_event_id`) → Calendar event delete; staff replies (message with `wa_message_id` NULL)
-  → WhatsApp via the bridge's `POST /send`, then the message id is backfilled.
+  `DENTAL APPT — <name> — <service>`; cancellations (with a `google_event_id`) → Calendar
+  event delete.
 
-Stdlib-only Python; idempotent via patient/chat cache, conversation cache, sqlite rowid cursors
-and `google_event_id` dedupe. Rows seeded or created outside the dashboard are tagged
-(`metadata.source`) so the claim path never re-books them.
+The daemon no longer mirrors WhatsApp and never sends to WhatsApp (the Baileys bridge path was
+removed from the repo); all WhatsApp traffic stays with the agent's own session. Stdlib-only
+Python; idempotent via in-process patient/conversation caches and `google_event_id` dedupe.
+Rows seeded or created outside the dashboard are tagged (`metadata.source`) so the claim path
+never re-books them.
 
 ### Install
 
@@ -209,7 +210,7 @@ ssh adorneltarget@<vps> bash /tmp/franel-deploy.sh
 ```
 
 The installer creates `~/.config/franel-sync.env` (mode 600 — Supabase URL, **service_role
-key**, clinic UUID, `BRIDGE_URL=http://localhost:3000`; never commit this file), the
+key**, clinic UUID; never commit this file), the
 `franel-sync.service` **user** unit (`Restart=on-failure`, `WantedBy=default.target`), verifies
 the clinic row and runs a read-only dry-run before first start.
 
@@ -222,25 +223,8 @@ tail -f ~/franel-sync/sync.log               # rotating, capped at 5 000 lines
 python3 ~/franel-sync/franel_sync.py --once --dry-run
 ```
 
-`~/franel-sync/state.json` holds all cursors/caches — delete it to force a full re-mirror.
-
-### WhatsApp bridge pairing (Baileys)
-
-First pairing (or if the phone was re-paired / the session corrupted):
-
-```bash
-systemctl --user stop hermes-gateway.service
-mv ~/.hermes/whatsapp/session ~/.hermes/whatsapp/session.bak-<date>
-~/.hermes/node/bin/node ~/.hermes/hermes-agent/scripts/whatsapp-bridge/bridge.js \
-  --pair-only --session ~/.hermes/whatsapp/session   # scan the QR with the clinic phone
-systemctl --user start hermes-gateway.service
-curl -s http://localhost:3000/health                 # expect "status":"open"
-```
-
-If the log shows `Connection closed (reason: 403)` in a loop, the saved pairing has been
-revoked (or Meta is temporarily blocking the number) — re-pair from scratch as above; a plain
-restart does not fix it. While the bridge is down, the daemon keeps mirroring and records
-outbound sends as pending; queued confirmations/replies fire on the first healthy cycle.
+`~/franel-sync/state.json` holds the cursors (seen calendar events, no-show scan time) —
+delete it to force a full calendar re-scan.
 
 ## Deployment
 

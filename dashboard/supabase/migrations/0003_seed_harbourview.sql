@@ -26,7 +26,7 @@ VALUES
     'a1b2c3d4-e5f6-7890-abcd-ef1234567890',  -- HVB CLINIC (fixed id)
     'HarbourView Dental Clinic',
     '18 Meridian Avenue, North Legon, Accra, Ghana',
-    '+233503585763',                          -- WhatsApp line (also used as the main phone)
+    NULL,                                                 -- real clinic line scrubbed from repo (set live in Supabase if needed)
     'targetnelly@gmail.com',                  -- verify: clinic profile lists this as the contact email
     NULL,
     '{"monday":"08:30 – 17:30","tuesday":"08:30 – 17:30","wednesday":"08:30 – 17:30","thursday":"08:30 – 17:30","friday":"08:30 – 17:30","saturday":"09:00 – 14:00","sunday":"Closed"}'::jsonb,
@@ -67,7 +67,7 @@ VALUES
     '4e6ff05e-a075-409b-89c1-fd96b697a5f5',  -- admin@harbourviewdental.com (real)
     'Admin',
     'owner',
-    '+233503585763',
+    NULL,                                       -- real staff line scrubbed from repo
     'targetnelly@gmail.com',
     true,
     now()
